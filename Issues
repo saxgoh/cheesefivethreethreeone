@@ -1,7 +1,7 @@
 Issues: 
-1) duplicate filename! - to use timestamp to differentiate
+1) duplicate filename! - to use timestamp to differentiate 
 2) app5 inline javascript never grep
 3) app6 not working also- cannot get action=load1
-4) app7 can get the link, however, cannot keep parameter. suggest to keep the rest and only iterate page or file.
-5) appp8 not working-need to keep certain things in the link
+4) app7 can get the link, however, cannot keep parameter. suggest to keep the rest and only iterate page or file. -- done
+5) app8 not working-need to keep certain things in the link
 6) app9 cannot login? cannot get the link
