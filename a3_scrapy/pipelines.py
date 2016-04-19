@@ -52,7 +52,7 @@ class A3ScrapyPipeline(object):
       return
 
     def process_item(self, item, spider):
-      print "~~~~~~~~Pipeline~~~~~~~~~~~"
+      print "~~~~~~~~Start of Pipeline~~~~~~~~~~~"
       print item
       action = item['action'][0]
       method = item['method'][0]
@@ -87,7 +87,7 @@ class A3ScrapyPipeline(object):
       res = res[1:-1]
       spider.collated_urls.add(res)
 
-      print "~~~~~~~~Pipeline~~~~~~~~~~~"
+      print "~~~~~~~~End of Pipeline~~~~~~~~~~~"
       return
 
     def close_spider(self, spider):
