@@ -1,0 +1,171 @@
+{
+  "https://app1.com/": {
+        "allowed_domains": [
+          "app1.com"
+        ],
+        "loginParam": [
+            {
+                "path":"admin/index.php?page=login",
+                "username": "admin",
+                "password": "admin"
+            },
+            {
+                "path":"users/login.php",
+                "username": "scanner1",
+                "password": "scanner1"
+            }
+        ]
+    },
+  "https://app2.com/": {
+        "allowed_domains": [
+          "app2.com"
+        ],
+        "loginParam": [
+            {
+                "path":"",
+                "username": "admin",
+                "password": "AdminAdmin1!"
+            },
+            {
+                "path":"",
+                "username": "test",
+                "password": "TestTest1!"
+            }
+        ]
+    },
+  "https://app3.com/": {
+        "allowed_domains": [
+          "app3.com"
+        ]
+    },
+  "https://app4.com/": {
+        "allowed_domains": [
+          "app4.com"
+        ],
+        "loginParam": [
+            {
+                "path":"index.php",
+                "username": "admin@admin.com",
+                "password": "admin"
+            },
+            {
+                "path":"index.php",
+                "username": "dev@dev.com",
+                "password": "developer"
+            },
+            {
+                "path":"index.php",
+                "username": "manager@manager.com",
+                "password": "manager"
+            },
+            {
+                "path":"index.php",
+                "username": "user@user.com",
+                "password": "user"
+            }
+        ]
+    },
+  "https://app5.com/": {
+        "allowed_domains": [
+          "app5.com"
+        ],
+        "loginParam": [
+            {
+                "path":"www/index.php",
+                "username": "admin",
+                "password": "admin"
+            },
+            {
+                "path":"www/index.php",
+                "username": "professor",
+                "password": "professor"
+            },
+            {
+                "path":"www/index.php",
+                "username": "student",
+                "password": "student"
+            }
+        ]
+    },
+  "https://app6.com/": {
+        "allowed_domains": [
+          "app6.com"
+        ],
+        "loginParam": [
+            {
+                "path":"zimplith.php",
+                "username": "admin",
+                "password": "AdminAdmin1!"
+            }
+        ]
+    },
+  "https://app7.com/": {
+        "allowed_domains": [
+          "app7.com"
+        ],
+        "loginParam": [
+            {
+                "path":"",
+                "username": "test@test.com",
+                "password": "testtest"
+            },
+     	    {
+                "path":"oc-admin/index.php?page=login",
+                "username": "admin",
+                "password": "admin"
+            }
+        ]
+    },
+  "https://app8.com/": {
+        "allowed_domains": [
+          "app8.com"
+        ],
+        "loginParam": [
+            {
+                "path":"upload/",
+                "username": "test@test",
+                "password": "test"
+            },
+            {
+                "path":"upload/admin",
+                "username": "admin",
+                "password": "admin"
+            }
+
+        ]
+    },
+  "https://app9.com/": {
+        "allowed_domains": [
+          "app9.com"
+        ],
+        "loginParam": [
+            {
+                "path":"index-test.php/site/login",
+                "username": "admin",
+                "password": "admin"
+            },
+            {
+                "path":"index-test.php/site/login",
+                "username": "test",
+                "password": "test"
+            }
+        ]
+    },
+  "https://app10.com/": {
+        "allowed_domains": [
+          "app10.com"
+        ]
+    },
+  "https://app11.com/": {
+        "allowed_domains": [
+          "app11.com"
+        ],
+        "loginParam": [
+            {
+                "path":"ajax_login.php",
+                "username": "admin",
+                "password": "admin"
+            }
+        ]
+    }
+}

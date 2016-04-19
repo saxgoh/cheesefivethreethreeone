@@ -1,0 +1,28 @@
+[{
+  "/main.php": {
+    "type": "POST", 
+    "param": []
+  }
+,
+  "/windows/function.php": {
+    "type": "GET", 
+    "param": [
+      "start", 
+      "end", 
+      "file"
+    ]
+  }
+,
+  "/windows/code.php": {
+    "type": "GET", 
+    "param": [
+      "lines", 
+      "file"
+    ]
+  }
+,
+  "/windows/leakscan.php": {
+    "type": "POST", 
+    "param": []
+  }
+}]
