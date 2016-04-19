@@ -4,3 +4,4 @@ a3_crawling/input.json
 *.pyc
 */*.pyc
 */*/*.pyc
+a3_exploit/generated_files/
