@@ -212,8 +212,10 @@ class RegularSpider(CrawlSpider):
       print "Checking Javascript"
       javascript_links = {}
       for javascript_link in sel.xpath("//script/@src"):
-      #Extract Path in Javascript SRC
-         split_urls = javascript_link.extract().split("?")
+         url = urlparse.urljoin(response.url,javascript_link.extract())
+         self.request_javascript(url)
+         #Extract Path in Javascript SRC
+         split_urls = url.split("?")
          if len(split_urls)==2:
             new_inputs=[]
             for param in split_urls[1].split("&"):
@@ -225,13 +227,6 @@ class RegularSpider(CrawlSpider):
             new_form['action']=[split_urls[0]]
             new_form['method']=["get".encode('utf-8')]
             new_form['fields']=new_inputs
-            print "i am here"
-            print new_form
-            print new_form
-            print new_form
-            print new_form
-            print new_form
-            print new_form
 
             if "action" in new_form and "method" in new_form:
               print "i am in calling"
