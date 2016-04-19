@@ -149,8 +149,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      # if self.login:
-      #     print response.body
+      if self.login:
+          print response.body
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')

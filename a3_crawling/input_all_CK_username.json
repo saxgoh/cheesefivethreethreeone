@@ -93,7 +93,7 @@
         ],
         "loginParam": [
             {
-                "path":"zimplith.php",
+                "path":"zimplit.php",
                 "username": "admin",
                 "password": "admin"
             }
