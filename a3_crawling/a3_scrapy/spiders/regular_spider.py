@@ -19,7 +19,7 @@ class RegularSpider(CrawlSpider):
   password = ""
   login = False
   ops = None
-  collated_urls = set()
+  collated_urls = {}
   visit_js = []
   traversed_urls = set()
 
