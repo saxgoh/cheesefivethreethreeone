@@ -86,6 +86,7 @@ class RegularSpider(CrawlSpider):
           self.parse_item(response)
 
   def parse_javascript(self,response):
+
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
       # .open("POST", "main.php", true);
@@ -99,6 +100,11 @@ class RegularSpider(CrawlSpider):
           new_form=Form()
           match = re.findall("[\/\w]*\.php\??[^\),]*", o)
           if len(match) != 0:
+              print match
+              print match
+              print match
+              print match
+              print match
               # print "MATCH = "
               # print match
               # print "TYPE = "
@@ -111,8 +117,8 @@ class RegularSpider(CrawlSpider):
               # print action
               if len(action) == 1:
                   #make full url
-                  url=urlparse.urljoin(response.url,str(action[0]).decode('UTF-8'))
-                  new_form['action'] = [url]
+                  fullurl=urlparse.urljoin("XXXXX",str(action[0]).decode('UTF-8'))
+                  new_form['action'] = [fullurl]
               # print "VAR 1 = "
               params = re.findall("[\?\&]{1}(\w*)=", match[0])
               # print params
@@ -149,8 +155,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      # if self.login:
-      #     print response.body
+      if self.login:
+          print response.body
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')

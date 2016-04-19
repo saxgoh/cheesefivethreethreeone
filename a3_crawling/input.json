@@ -1,14 +1,7 @@
 {
-  "https://app6.com/": {
+"https://app3.com/": {
         "allowed_domains": [
-          "app6.com"
-        ],
-        "loginParam": [
-            {
-                "path":"zimplit.php?action=login",
-                "username": "admin",
-                "password": "admin"
-            }
+          "app3.com"
         ]
     }
 }

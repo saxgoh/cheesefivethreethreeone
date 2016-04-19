@@ -85,7 +85,8 @@ class RegularSpider(CrawlSpider):
       else:
           self.parse_item(response)
 
-  def parse_javascript(self,response,url):
+  def parse_javascript(self,response,baseurl):
+
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
       # .open("POST", "main.php", true);
@@ -99,6 +100,11 @@ class RegularSpider(CrawlSpider):
           new_form=Form()
           match = re.findall("[\/\w]*\.php\??[^\),]*", o)
           if len(match) != 0:
+              print match
+              print match
+              print match
+              print match
+              print match
               # print "MATCH = "
               # print match
               # print "TYPE = "
@@ -111,8 +117,8 @@ class RegularSpider(CrawlSpider):
               # print action
               if len(action) == 1:
                   #make full url
-                  fullurl=urlparse.urljoin(url,str(action[0]).decode('UTF-8'))
-                  new_form['action'] = [url]
+                  fullurl=urlparse.urljoin(baseurl,str(action[0]).decode('UTF-8'))
+                  new_form['action'] = [fullurl]
               # print "VAR 1 = "
               params = re.findall("[\?\&]{1}(\w*)=", match[0])
               # print params
@@ -130,7 +136,7 @@ class RegularSpider(CrawlSpider):
               print "NO ACTION / NO METHOD in JS form"
       return
 
-  def request_javascript(self,url):
+  def request_javascript(self,url,baseurl):
       print "i am in request"
       if url in self.visit_js:
          print "Javascript visited"
@@ -139,7 +145,7 @@ class RegularSpider(CrawlSpider):
          self.visit_js.append(url)
          print url
          out = check_output(["curl", "-k", "-sS", url])
-         test = self.parse_javascript(out,url)
+         test = self.parse_javascript(out,baseurl)
          return
 
 
@@ -210,7 +216,7 @@ class RegularSpider(CrawlSpider):
       javascript_links = {}
       for javascript_link in sel.xpath("//script/@src"):
          url = urlparse.urljoin(response.url,javascript_link.extract())
-         self.request_javascript(url)
+         self.request_javascript(url,response.url)
          #Extract Path in Javascript SRC
          split_urls = url.split("?")
          if len(split_urls)==2:
