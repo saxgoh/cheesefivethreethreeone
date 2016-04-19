@@ -1,6 +1,7 @@
 import json
 from scrapy import signals
-from datetime import datetime
+#from datetime import datetime
+import time
 from a3_scrapy.output_struct import OutputStruct, Item
 # -*- coding: utf-8 -*-
 
@@ -91,7 +92,7 @@ class A3ScrapyPipeline(object):
       return
 
     def close_spider(self, spider):
-      filename = spider.start_urls[0].replace(":","").replace("/","")
+      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
       op_file = open(filename + ".json", "ab")
       print "------------------------------------------"
       # for j in spider.collated_urls:

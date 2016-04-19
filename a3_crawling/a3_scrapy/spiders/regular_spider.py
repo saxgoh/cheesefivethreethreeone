@@ -21,6 +21,7 @@ class RegularSpider(CrawlSpider):
   ops = None
   collated_urls = set()
   visit_js = []
+  traversed_urls = set()
 
   # Rules for CrawlSpider
   rules = [Rule(LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out")), callback="parse_item", follow= True,)]
@@ -157,6 +158,37 @@ class RegularSpider(CrawlSpider):
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
 
+      if response.url not in self.traversed_urls:
+          split_url = response.url.split("?")
+          if len(split_url) > 1:
+              # for each param, generate a new form
+              for p in re.split("&","".join(split_url[1:])):
+                  new_form = Form()
+                  new_form["method"] = ["GET".decode("utf-8")]
+                  action = split_url[0].decode("utf-8")
+                  ins = []
+                  split_param = p.split("=")
+                  # for n params, each form should stil contain n-1 params in the action
+                  if len(split_param) > 1:
+                      action += "?"
+                      for p2 in re.split("&","".join(split_url[1:])):
+                          if p == p2:
+                              i = Input()
+                              i["inputName"] = [split_param[0]]
+                              ins.append(i)
+                          else:
+                              action += p2 + "&"
+                      action = action[:-1]
+                  else:
+                      i = Input()
+                      i["inputName"] = [split_param[0]]
+                      ins.append(i)
+
+                  new_form["action"] = [action]
+                  new_form["fields"] = ins
+                  new_forms.append(new_form)
+          self.traversed_urls.add(response.url)
+
       # This is to capture headers with...
       print "HEADERS HERE"
       print "HEADERS HERE"
@@ -215,7 +247,12 @@ class RegularSpider(CrawlSpider):
       #Extract both GET and POST from form
       for formItem in form:
           new_form = Form()
-          new_form['action'] = formItem.xpath('@action').extract()
+          # new_form['action'] = formItem.xpath('@action').extract()
+          action_url=formItem.xpath('@action').extract()[0].decode('UTF-8')
+          if not action_url.startswith("/"):
+            action_url = "/" + action_url
+          new_form['action'] = [action_url]
+
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:

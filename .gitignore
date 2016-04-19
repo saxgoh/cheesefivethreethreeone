@@ -1,1 +1,5 @@
-a3_scrapy/http*
+a3_crawling/http*
+a3_crawling/input.json
+*.pyc
+*/*.pyc
+*/*/*.pyc
