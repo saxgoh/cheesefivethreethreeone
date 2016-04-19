@@ -194,7 +194,12 @@ class RegularSpider(CrawlSpider):
       #Extract both GET and POST from form
       for formItem in form:
           new_form = Form()
-          new_form['action'] = formItem.xpath('@action').extract()
+          # new_form['action'] = formItem.xpath('@action').extract()
+          action_url=formItem.xpath('@action').extract()[0].decode('UTF-8')
+          if not action_url.startswith("/"):
+            action_url = "/" + action_url
+          new_form['action'] = [action_url]
+
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:
