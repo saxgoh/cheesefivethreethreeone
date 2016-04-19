@@ -238,9 +238,11 @@ class RegularSpider(CrawlSpider):
   
       #End Extract Path in Javascript SRC
 
+      print "LONELY INPUTS HERE"
       lonely_inputs = {}
       for ip in sel.xpath("//input"):
         lonely_inputs[ip.extract()] = ip
+        print ip.extract()
 
       #Extract both GET and POST from form
       for formItem in form:

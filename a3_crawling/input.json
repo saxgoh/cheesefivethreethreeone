@@ -1,18 +1,18 @@
 {
-  "https://app9.com/": {
+  "https://app1.com/": {
         "allowed_domains": [
-          "app9.com"
+          "app1.com"
         ],
         "loginParam": [
             {
-                "path":"index-test.php/site/login",
+                "path":"admin/index.php?page=login",
                 "username": "admin",
                 "password": "admin"
             },
             {
-                "path":"index-test.php/site/login",
-                "username": "test",
-                "password": "test"
+                "path":"users/login.php",
+                "username": "scanner1",
+                "password": "scanner1"
             }
         ]
     }
