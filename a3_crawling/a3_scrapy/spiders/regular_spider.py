@@ -17,6 +17,8 @@ class RegularSpider(CrawlSpider):
   start_urls = []
   username = ""
   password = ""
+  username_identifier = ""
+  password_identifier = ""
   login = False
   ops = None
   collated_urls = {}
@@ -65,7 +67,10 @@ class RegularSpider(CrawlSpider):
           password_field = this_is_my_form.xpath(".//input[@type='password']/@name").extract()
           other_fields = this_is_my_form.xpath(".//input[@value!='']")
           if len(username_field) > 0 and len(password_field) > 0:
+              self.username_identifier = str(username_field[0])
+              self.password_identifier = str(password_field[0])
               submit_data = {str(username_field[0]): self.username, str(password_field[0]): self.password}
+              
               if len(other_fields) > 0:
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:

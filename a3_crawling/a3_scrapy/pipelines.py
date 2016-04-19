@@ -127,7 +127,8 @@ class A3ScrapyPipeline(object):
         # print k + " --> "
         # print v
 
-      final_op["login_required"] = {'path': spider.start_urls[0], 'param': {'username_element_name': '', 'username_value': '', 'password_element_name': '', 'password_value': ''}}
+      if spider.login:
+        final_op["login_required"] = {'path': spider.start_urls[0], 'param': {'username_element_name': spider.username_identifier, 'username_value': spider.username, 'password_element_name': spider.password_identifier, 'password_value': spider.password}}
       filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
       op_file = open(filename + ".json", "ab")
       op_file.write(json.dumps([final_op], indent=2))
