@@ -176,16 +176,37 @@ class RegularSpider(CrawlSpider):
            print response.headers
       print "HEADERS END"
 
-
       # This is to check javascript
       print "Checking Javascript"
       javascript_links = {}
       for javascript_link in sel.xpath("//script/@src"):
-         url = response.url+javascript_link.extract()
-         self.request_javascript(url)
-      print "End check javascript"
-      # End check javascript
+      #Extract Path in Javascript SRC
+         split_urls = javascript_link.extract().split("?")
+         if len(split_urls)==2:
+            new_inputs=[]
+            for param in split_urls[1].split("&"):
+               new_input = Input()
+               parameter=param.split("=")
+               new_input["inputName"] = [parameter[0]]
+               new_inputs.append(new_input)
+            new_form = Form()
+            new_form['action']=[split_urls[0]]
+            new_form['method']=["get".encode('utf-8')]
+            new_form['fields']=new_inputs
+            print "i am here"
+            print new_form
+            print new_form
+            print new_form
+            print new_form
+            print new_form
+            print new_form
 
+            if "action" in new_form and "method" in new_form:
+              print "i am in calling"
+              itemproc = self.crawler.engine.scraper.itemproc
+              itemproc.process_item(new_form,self)
+  
+      #End Extract Path in Javascript SRC
 
       lonely_inputs = {}
       for ip in sel.xpath("//input"):
