@@ -1,14 +1,7 @@
 {
-  "https://app5.com/": {
+    "https://app3.com/": {
         "allowed_domains": [
-          "app5.com"
-        ],
-        "loginParam": [
-            {
-                "path":"www/index.php",
-                "username": "admin",
-                "password": "admin"
-            }
+          "app3.com"
         ]
     }
 }

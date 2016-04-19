@@ -85,7 +85,7 @@ class RegularSpider(CrawlSpider):
       else:
           self.parse_item(response)
 
-  def parse_javascript(self,response):
+  def parse_javascript(self,response,url):
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
       # .open("POST", "main.php", true);
@@ -110,12 +110,9 @@ class RegularSpider(CrawlSpider):
               action = re.findall("[\/\w]*\.php", match[0])
               # print action
               if len(action) == 1:
-                  #add leading slash
-                  url=str(action[0]).decode('UTF-8')
-                  if url.startswith("/"):
-                     new_form['action'] = [url]
-                  else:
-                     new_form['action'] = ["/"+url]
+                  #make full url
+                  fullurl=urlparse.urljoin(url,str(action[0]).decode('UTF-8'))
+                  new_form['action'] = [url]
               # print "VAR 1 = "
               params = re.findall("[\?\&]{1}(\w*)=", match[0])
               # print params
@@ -142,7 +139,7 @@ class RegularSpider(CrawlSpider):
          self.visit_js.append(url)
          print url
          out = check_output(["curl", "-k", "-sS", url])
-         test = self.parse_javascript(out)
+         test = self.parse_javascript(out,url)
          return
 
 
