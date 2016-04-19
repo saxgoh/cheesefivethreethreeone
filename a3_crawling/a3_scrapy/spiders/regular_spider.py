@@ -155,21 +155,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-
-      if self.login:
-          print response.body
+      # if self.login:
+      #     print response.body
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -264,7 +251,6 @@ class RegularSpider(CrawlSpider):
           #concat to form full path
           action_url=urlparse.urljoin(response.url,action_url)
           new_form['action'] = [action_url]
-
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:

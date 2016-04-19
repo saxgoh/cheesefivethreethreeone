@@ -55,9 +55,12 @@ class A3ScrapyPipeline(object):
     def process_item(self, item, spider):
       print "~~~~~~~~Start of Pipeline~~~~~~~~~~~"
       print item
+
+      # where item --> Form object
       action = item['action'][0]
       method = item['method'][0]
 
+      # for each input field, if name exists, add input to input_arr
       input_arr = []
       for one_input in item['fields']:
         inputName = one_input["inputName"]
@@ -66,29 +69,47 @@ class A3ScrapyPipeline(object):
       # removing duplicates in params
       input_arr = list(set(input_arr))
 
+      # if action url contains parameter, remove them and add to param list
       additional_arr = []
       split_url = action.split("?")
       if len(split_url) == 2:
+        # take only domain from url
         url = split_url[0]
         additional_params = split_url[1].split("&")
+        # add each param after ?query1=1&query2=2...
         for additional_param in additional_params:
             param = additional_param.split("=")
             if param[0] != "":
                 additional_arr.append(param[0])
-        res = {}
-        merged_arr = list(set(input_arr + additional_arr))
-        res[url] = {'type': method, 'param': merged_arr}
-        res = json.dumps(res, indent=2)
-        res = res[1:-1]
-        spider.collated_urls.add(res)
 
+        res = {}
+        # remove duplicates after adding new params
+        merged_arr = list(set(input_arr + additional_arr))
+        # turn form into hash
+        res[url] = {'type': method, 'param': merged_arr}
+        # turn hash into json
+        # remove leading and following '[', ']'
+        # add to collated urls for printing when spider closes
+        self.add_to_collated_urls(res,spider)
+
+      # use full url under form action
       res = {}
       res[str(action)] = {'type': method, 'param': input_arr}
+      self.add_to_collated_urls(res,spider)
+
+      print "~~~~~~~~End of Pipeline~~~~~~~~~~~"
+      return
+
+    def add_to_collated_urls(self, res, spider):
+      # print type(res)
+      # print type(res)
+      # print type(res)
+      # print type(res)
+      # print type(res)
+      # print type(res)
       res = json.dumps(res, indent=2)
       res = res[1:-1]
       spider.collated_urls.add(res)
-
-      print "~~~~~~~~End of Pipeline~~~~~~~~~~~"
       return
 
     def close_spider(self, spider):
