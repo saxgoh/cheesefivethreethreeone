@@ -1,25 +1,6 @@
 {
-<<<<<<< Updated upstream
-"https://app3.com/": {
-        "allowed_domains": [
-          "app3.com"
-=======
-  "https://app1.com/": {
-        "allowed_domains": [
-          "app1.com"
-        ],
-        "loginParam": [
-            {
-                "path":"admin/index.php?page=login",
-                "username": "admin",
-                "password": "admin"
-            },
-            {
-                "path":"users/login.php",
-                "username": "scanner1",
-                "password": "scanner1"
-            }
->>>>>>> Stashed changes
-        ]
-    }
+	"https://app3.com/": {
+		"allowed_domains": [
+		  "app3.com"
+]}
 }

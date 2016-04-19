@@ -155,6 +155,19 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+      # print response.url
+
       if self.login:
           print response.body
       new_forms = []
@@ -257,8 +270,8 @@ class RegularSpider(CrawlSpider):
           if len(formItem.xpath("input")) == 0:
               print "weird form"
               # This are forms with everything outside
-              form_items = sel.xpath("//*[ancestor::form]/input")
-              form_textareas = sel.xpath("//*[ancestor::form]/textarea")
+              form_items = sel.xpath("//*[ancestor::form]/..//input")
+              form_textareas = sel.xpath("//*[ancestor::form]/..//textarea")
           else:
               # This are the regular forms
               print "regular form"
@@ -290,11 +303,12 @@ class RegularSpider(CrawlSpider):
           #                      as required by the user. Therefore, extra inputs
           #                      will either (1) be ignored by server
           #                               or (2) crash the server LOL
-          for key, lonely_input in lonely_inputs.iteritems():
-              new_input = Input()
-              new_input["inputName"] = lonely_input.xpath("@name").extract()
-              new_input["inputType"] = lonely_input.xpath("@type").extract()
-              inputs.append(new_input)
+          if len(formItem.xpath("input")) == 0:
+              for key, lonely_input in lonely_inputs.iteritems():
+                  new_input = Input()
+                  new_input["inputName"] = lonely_input.xpath("@name").extract()
+                  new_input["inputType"] = lonely_input.xpath("@type").extract()
+                  inputs.append(new_input)
           new_form["fields"] = inputs
           new_forms.append(new_form)
       print "======================================"
