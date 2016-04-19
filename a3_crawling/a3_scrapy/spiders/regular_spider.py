@@ -19,7 +19,7 @@ class RegularSpider(CrawlSpider):
   password = ""
   login = False
   ops = None
-  collated_urls = set()
+  collated_urls = {}
   visit_js = []
   traversed_urls = set()
 
@@ -155,21 +155,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-      # print response.url
-
-      if self.login:
-          print response.body
+      # if self.login:
+      #     print response.body
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -251,9 +238,11 @@ class RegularSpider(CrawlSpider):
   
       #End Extract Path in Javascript SRC
 
+      print "LONELY INPUTS HERE"
       lonely_inputs = {}
       for ip in sel.xpath("//input"):
         lonely_inputs[ip.extract()] = ip
+        print ip.extract()
 
       #Extract both GET and POST from form
       for formItem in form:
@@ -264,7 +253,6 @@ class RegularSpider(CrawlSpider):
           #concat to form full path
           action_url=urlparse.urljoin(response.url,action_url)
           new_form['action'] = [action_url]
-
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:
@@ -299,10 +287,10 @@ class RegularSpider(CrawlSpider):
               # new_form.add_form_input(new_input)
 
           # For each leftover input field, tag it to every form.
-          # Assumption by Elvin: On submit, servers will only use the form variable
-          #                      as required by the user. Therefore, extra inputs
-          #                      will either (1) be ignored by server
-          #                               or (2) crash the server LOL
+          # Assumption: On submit, servers will only use the form variable
+          #             as required by the user. Therefore, extra inputs
+          #             will either (1) be ignored by server
+          #                      or (2) crash the server LOL
           if len(formItem.xpath("input")) == 0:
               for key, lonely_input in lonely_inputs.iteritems():
                   new_input = Input()

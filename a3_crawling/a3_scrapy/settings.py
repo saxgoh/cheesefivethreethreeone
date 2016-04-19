@@ -13,7 +13,7 @@ BOT_NAME = 'a3_scrapy'
 
 SPIDER_MODULES = ['a3_scrapy.spiders']
 NEWSPIDER_MODULE = 'a3_scrapy.spiders'
-DEPTH_LIMIT=5
+DEPTH_LIMIT=10
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'a3_scrapy (+http://www.yourdomain.com)'

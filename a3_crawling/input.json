@@ -1,6 +1,7 @@
 {
-	"https://app3.com/": {
-		"allowed_domains": [
-		  "app3.com"
-]}
+  "https://app3.com/": {
+        "allowed_domains": [
+          "app3.com"
+        ]
+    }
 }
