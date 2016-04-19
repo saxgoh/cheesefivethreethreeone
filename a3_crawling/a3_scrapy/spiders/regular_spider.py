@@ -287,10 +287,10 @@ class RegularSpider(CrawlSpider):
               # new_form.add_form_input(new_input)
 
           # For each leftover input field, tag it to every form.
-          # Assumption by Elvin: On submit, servers will only use the form variable
-          #                      as required by the user. Therefore, extra inputs
-          #                      will either (1) be ignored by server
-          #                               or (2) crash the server LOL
+          # Assumption: On submit, servers will only use the form variable
+          #             as required by the user. Therefore, extra inputs
+          #             will either (1) be ignored by server
+          #                      or (2) crash the server LOL
           if len(formItem.xpath("input")) == 0:
               for key, lonely_input in lonely_inputs.iteritems():
                   new_input = Input()
