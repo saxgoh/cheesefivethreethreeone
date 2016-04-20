@@ -118,11 +118,22 @@ class A3ScrapyPipeline(object):
       print spider.collated_urls
       final_op = {}
       for k,v in spider.collated_urls.iteritems():
+        print k
         actual_key = k.split(" ")[1]
         actual_key = urljoin(spider.start_urls[0], actual_key)
         actual_value = v
         actual_value["param"] = list(v["param"])
-        final_op[actual_key] = actual_value
+        if actual_key in final_op:
+          original = final_op[actual_key]
+          print type(original)
+          original.append(actual_value)
+          final_op[actual_key] = original
+        else:
+          print "========================================================="
+          print "adding -> " + json.dumps(actual_value)
+          print actual_key
+          print actual_value
+          final_op[actual_key] = [actual_value]
         # print k + " --> "
         # print v
 
