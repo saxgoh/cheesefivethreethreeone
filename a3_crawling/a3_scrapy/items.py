@@ -22,6 +22,7 @@ class Form(Item):
   action = Field()
   method = Field()
   fields = Field()
+  cookie = Field()
   # form_inputs = []
   # def add_form_input(self,new_input_object):
   #   self.form_inputs.append(new_input_object)

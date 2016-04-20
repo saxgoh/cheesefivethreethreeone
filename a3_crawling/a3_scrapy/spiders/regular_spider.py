@@ -203,11 +203,21 @@ class RegularSpider(CrawlSpider):
            print response.request.url
            cookies=response.request.headers['Cookie']
            #example of cookie PHPSESSID=ks4dsu79gf7ve17uu3rfhmh581; display_all_courses=1;
+           new_form = Form()
+           new_form["method"] = ["Header"]
+           new_form["action"] = [response.request.url]
+           input_field = Input()
+           cstring = "Cookie"
+           cvalues = set()
            for paramvalue in re.split("; ",cookies):
               param=re.split("=",paramvalue)
               if (len(param)>0):
                  if len(param[0])>0:
-                    print param[0]
+                     cvalues.add(param[0])
+           cstring += ":" + ",".join(list(cvalues))
+           input_field["inputName"] = [cstring]
+           new_form["fields"] = [input_field]
+           new_forms.append(new_form)
                     #Type is header, Injection is COOKIE, and the param is in param[0]
                     #URL is response.request.url
                     #ADD THIS INTO OUTPUT
