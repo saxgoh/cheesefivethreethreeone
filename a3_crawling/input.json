@@ -15,7 +15,6 @@
                 "password": "scanner1"
             }
         ]
-<<<<<<< HEAD
     },
   "https://app2.com/": {
         "allowed_domains": [
@@ -169,7 +168,4 @@
             }
         ]
     }
-=======
-   }
->>>>>>> a15744f2e2c9b6a2ae9807f8142a449407cf26b5
 }
