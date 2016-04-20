@@ -1,19 +1,14 @@
 {
-  "https://app1.com/": {
-        "allowed_domains": [
-          "app1.com"
-        ],
-        "loginParam": [
-            {
-                "path":"admin/index.php?page=login",
-                "username": "admin",
-                "password": "admin"
-            },
-            {
-                "path":"users/login.php",
-                "username": "scanner1",
-                "password": "scanner1"
-            }
-        ]
-    }
+  "https://bm1.com/": {
+    "allowed_domains": [
+      "bm1.com"
+    ],
+    "loginParam": [
+      {
+        "path":"login.php",
+        "username": "admin",
+        "password": "password"
+      }
+    ]
+  }
 }

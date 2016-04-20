@@ -26,7 +26,7 @@ class RegularSpider(CrawlSpider):
   traversed_urls = set()
 
   # Rules for CrawlSpider
-  rules = [Rule(LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out")), callback="parse_item", follow= True,)]
+  rules = [Rule(LinkExtractor(allow=('Inclusion'),deny=("logout", "Logout", "Log Out", "Log out", "Sign out")), callback="parse_item", follow= True,)]
 
   def __init__(self, *args, **kwargs):
     super(RegularSpider, self).__init__(*args, **kwargs)
@@ -45,6 +45,10 @@ class RegularSpider(CrawlSpider):
     print self.start_urls
     print self.login
 
+  # For JS customization
+  # def process_value(value):
+  #     return
+
   def parse_start_url(self, response):
       print "I WAS HERE"
       if self.login:
@@ -59,6 +63,13 @@ class RegularSpider(CrawlSpider):
           else:
               this_is_my_form_url = self.start_urls[0]
           print this_is_my_form_url
+          print "=============================================="
+          print "****"
+          print "=============================================="
+          print this_is_my_form.extract()
+          print "=============================================="
+          print "****"
+          print "=============================================="
 
           # ASSUMPTION: most login forms put username above password
           #             therefore, for our login form, we will use
@@ -70,12 +81,11 @@ class RegularSpider(CrawlSpider):
               self.username_identifier = str(username_field[0])
               self.password_identifier = str(password_field[0])
               submit_data = {str(username_field[0]): self.username, str(password_field[0]): self.password}
-              
+
               if len(other_fields) > 0:
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:
                           submit_data[str(of.xpath("@name").extract()[0])] = str(of.xpath("@value").extract()[0])
-              print submit_data
               return [scrapy.FormRequest(
                       url=this_is_my_form_url,
                       formdata=submit_data,
