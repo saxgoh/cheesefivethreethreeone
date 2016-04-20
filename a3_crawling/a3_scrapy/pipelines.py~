@@ -131,7 +131,7 @@ class A3ScrapyPipeline(object):
       append_username=''
       if spider.login:
         final_op["login_required"] = {'path': spider.start_urls[0], 'param': {'username_element_name': spider.username_identifier, 'username_value': spider.username, 'password_element_name': spider.password_identifier, 'password_value': spider.password}}
-        append_username="_"+str(spider.username).replace("@","")
+        append_username="_"+str(spider.username).replace("@","").replace(".","")
 
       filename = urlparse(spider.start_urls[0]).netloc+append_username+"_"+str(int(time.strftime("%H%M%S")))
       filename = filename.replace(":","").replace("/","")

@@ -43,18 +43,14 @@ class A3ScrapyPipeline(object):
     #     #spider.log("[MyPipeline] Initializing resources for %s" % spider.name)
 
     def open_spider(self, spider):
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print " OPENED SPIDER "
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print "Started: " + spider.start_urls[0]
       return
 
     def process_item(self, item, spider):
-      print "~~~~~~~~Start of Pipeline~~~~~~~~~~~"
+      print "^^^^^^^^Start of Pipeline^^^^^^^^^^^"
       print item
 
       # where item --> Form object
@@ -98,7 +94,7 @@ class A3ScrapyPipeline(object):
       self.add_to_collated_urls(str(action), {'type': method, 'param': input_set}, spider)
       # self.add_to_collated_urls(res,spider)
 
-      print "~~~~~~~~End of Pipeline~~~~~~~~~~~"
+      print "^^^^^^^^End of Pipeline^^^^^^^^^^^"
       return
 
     def add_to_collated_urls(self, url, type_param_struct, spider):
@@ -152,11 +148,7 @@ class A3ScrapyPipeline(object):
       #       s += ","
       #   op_file.write(s)
       # op_file.write("}]")
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print " CLOSED SPIDER "
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       return
