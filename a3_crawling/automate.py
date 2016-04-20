@@ -28,21 +28,26 @@ with open(inputFilename, 'r') as f:
 #Run A3_Crawling
 print "Running a3_crawling"
 callcmd='python run.py ' +inputFilename
-call([callcmd], shell=True)
+#call([callcmd], shell=True)
 
 #Run A3_exploit
-#loop through outputfolder
-dirPath='../a3_exploit/output'
+#loop through outputfolder in a3_crawling
+dirPath='output'
 if not os.path.exists(dirPath):
     print dirPath
     print "output does not exist"
 else:
-    for root, dirs, filenames in os.walk(dirPath):
-        for f in filenames:
-          print(f)  
-          injectionFilename="../a3_exploit/output"+f
-          payloadpath="../a3_exploit/"+payloadFilename
-          callexploit='python ../a3_exploit/run.py '+injectionFilename+" "+payloadpath
-          print injectionFilename
+    print "Path exist"
+    print "Path exist"
+    print "Path exist"
+    print "Path exist"
+    print "Path exist"
+    for filename in os.listdir(dirPath):
+        if len(filename)>0:
+          #print filename
+          callexploit='python ../a3_exploit/run.py '+str("../a3_crawling/output/"+filename)+" "+payloadFilename
+          print "==============calling exploit========="
+          print callexploit
+          print "==============calling exploit========="
           call([callexploit], shell = True)
             
