@@ -170,6 +170,10 @@ class RegularSpider(CrawlSpider):
 
       # if self.login:
       #     print response.body
+      
+
+
+
 
       if "=appearance" in response.body:
         print "++++++++++++++++++++"
@@ -213,18 +217,49 @@ class RegularSpider(CrawlSpider):
 
       # This is to capture headers with...
       print "&&&&&& HEADERS HERE &&&&&&"
+      print response.request.headers
       print "&&&&&& HEADERS HERE &&&&&&"
-      print response.headers
-
-      if "Location" in response.headers:
-           print response.headers
-      elif "Language" in response.headers:
-           print response.headers
-      elif "Cookie" in response.headers:
-           print response.headers
-      elif "X-Requested-By" in response.headers:
-           print response.headers
+      if "Location" in response.request.headers:
+           print "Location"
+           print response.request.headers['Location']
+                 #Can use same logic as cookie
+                 #type is header, injection is location, value is url
+      if "Cookie" in response.request.headers:
+           print "Cookie"
+           print response.request.url
+           cookies=response.request.headers['Cookie']
+           #example of cookie PHPSESSID=ks4dsu79gf7ve17uu3rfhmh581; display_all_courses=1;
+           for paramvalue in re.split("; ",cookies):
+              param=re.split("=",paramvalue)
+              if (len(param)>0):
+                 if len(param[0])>0:
+                    print param[0]
+                    #Type is header, Injection is COOKIE, and the param is in param[0]
+                    #URL is response.request.url
+                    #ADD THIS INTO OUTPUT
+                    #ADD THIS INTO OUTPUT
+                    #ADD THIS INTO OUTPUT
+                    #ADD THIS INTO OUTPUT
+           
+      if "Referer" in response.request.headers:
+           print "Referer"
+           print response.request.headers['Referer']
+                 #Just add it as injnection point type header, param is Language
+      if "Language" in response.request.headers:
+           print "Language"
+           print response.request.headers['Language']
+                 #Just add it as injnection point type header, param is Language
+      if "X-Requested-By" in response.request.headers:
+           print "X-Requested-By"
+           print response.request.headers['X-Requested-By']
+                    #Add type is header param is X-Requested-By to output
+                    #Add type is header param is X-Requested-By to output
+                    #Add type is header param is X-Requested-By to output
       print "HEADERS END"
+
+
+      print "&&&&&& HEADERS HERE &&&&&&"
+      print "&&&&&& HEADERS HERE &&&&&&"
 
       # This is to check javascript
       print "Checking Javascript"
