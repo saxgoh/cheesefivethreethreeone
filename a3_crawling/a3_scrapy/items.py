@@ -8,24 +8,10 @@
 import scrapy
 from scrapy.item import Item, Field
 
-class Website(Item):
-  # define the fields for your item here like:
-  # name = scrapy.Field()
-  url = Field()
-  #pass
-
-class Param(Item):
-  paramType = Field()
-  parameter = Field()
-
 class Form(Item):
   action = Field()
   method = Field()
   fields = Field()
-  cookie = Field()
-  # form_inputs = []
-  # def add_form_input(self,new_input_object):
-  #   self.form_inputs.append(new_input_object)
 
 class Input(Item):
   inputName = Field()

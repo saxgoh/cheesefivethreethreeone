@@ -15,33 +15,6 @@ from a3_scrapy.output_struct import OutputStruct, Item
 
 class A3ScrapyPipeline(object):
     filename=''
-    # def __init__(self,filename):
-    #   self.mysetting=filename
-    #   # print object
-    #
-    # @classmethod
-    # def from_crawler(cls, crawler):
-    #     settings = crawler.settings
-    #     instance = cls(settings['CUSTOM_SETTINGS_VARIABLE'])
-    #     crawler.signals.connect(instance.spider_opened, signal=signals.spider_opened)
-    #     return instance
-
-    # def spider_opened(self, spider):
-    #     print "I AM HERE"
-    #     print spider.start_urls[0]
-    #     self.filename=spider.start_urls[0].replace(":", "").replace("/", "")
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print self.filename
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    #     self.file = open(self.filename+".json", 'ab')
-    #     # do stuff with the spider: initialize resources, etc.
-    #     #spider.log("[MyPipeline] Initializing resources for %s" % spider.name)
 
     def open_spider(self, spider):
       print "=========================================="
@@ -52,7 +25,6 @@ class A3ScrapyPipeline(object):
 
     def process_item(self, item, spider):
       print "^^^^^^^^Start of Pipeline^^^^^^^^^^^"
-      print item
 
       # where item --> Form object
       action = item['action'][0]
@@ -78,22 +50,13 @@ class A3ScrapyPipeline(object):
             if param[0] != "":
                 additional_arr.append(param[0])
 
-        # res = {}
         # remove duplicates after adding new params
         merged_set = input_set.union(additional_arr)
         # turn form into hash
         self.add_to_collated_urls(url, {'type': method, 'param': merged_set}, spider)
-        # res[url] = {'type': method, 'param': merged_arr}
-        # turn hash into json
-        # remove leading and following '[', ']'
-        # add to collated urls for printing when spider closes
-        # self.add_to_collated_urls(res,spider)
 
       # use full url under form action
-      # res = {}
-      # res[str(action)] = {'type': method, 'param': input_arr}
       self.add_to_collated_urls(str(action), {'type': method, 'param': input_set}, spider)
-      # self.add_to_collated_urls(res,spider)
 
       print "^^^^^^^^End of Pipeline^^^^^^^^^^^"
       return
@@ -107,10 +70,6 @@ class A3ScrapyPipeline(object):
         new_params = type_param_struct["param"]
         merged_params = existing_params | new_params
         type_param_struct["param"] = merged_params
-      # json.dumps(res, indent=2)
-      # res = res[1:-1]
-      # spider.collated_urls.add(res)
-      print type_param_struct
       spider.collated_urls[method + " " + url] = type_param_struct
       return
 
@@ -118,24 +77,16 @@ class A3ScrapyPipeline(object):
       print spider.collated_urls
       final_op = {}
       for k,v in spider.collated_urls.iteritems():
-        print k
         actual_key = k.split(" ")[1]
         actual_key = urljoin(spider.start_urls[0], actual_key)
         actual_value = v
         actual_value["param"] = list(v["param"])
         if actual_key in final_op:
           original = final_op[actual_key]
-          print type(original)
           original.append(actual_value)
           final_op[actual_key] = original
         else:
-          print "========================================================="
-          print "adding -> " + json.dumps(actual_value)
-          print actual_key
-          print actual_value
           final_op[actual_key] = [actual_value]
-        # print k + " --> "
-        # print v
 
       append_username=''
       if spider.login:
@@ -144,27 +95,12 @@ class A3ScrapyPipeline(object):
 
       filename = urlparse(spider.start_urls[0]).netloc+append_username+"_"+str(int(time.strftime("%H%M%S")))
       filename = filename.replace(":","").replace("/","")
-#      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
 
       if not os.path.exists('output'):
             os.makedirs('output')
 
       op_file = open("./output/"+filename + ".json", "ab")
       op_file.write(json.dumps([final_op], indent=2))
-      # print "------------------------------------------"
-      # # for j in spider.collated_urls:
-      # #   print j
-      # print spider.collated_urls
-      #
-      # count = len(spider.collated_urls)
-      # op_file.write("[{")
-      # for j in spider.collated_urls:
-      #   count -=1
-      #   s = j
-      #   if count !=0:
-      #       s += ","
-      #   op_file.write(s)
-      # op_file.write("}]")
       print "=========================================="
       print " CLOSED SPIDER "
       print "=========================================="

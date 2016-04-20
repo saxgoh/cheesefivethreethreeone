@@ -34,25 +34,17 @@ class RegularSpider(CrawlSpider):
     # self.allowed_domains = kwargs["allowed_domains"]
     self.allowed_domains = [kwargs["allowed_domains"]]
     # if 'depth' in kwargs:
-    settings.overrides['DEPTH_LIMIT'] = 20# int(kwargs["depth"])
+    settings.set(self.name, int(kwargs["depth"]), priority='cmdline')
     if 'username' in kwargs:
         self.username = kwargs['username']
     if 'password' in kwargs:
         self.password = kwargs['password']
     if 'login' in kwargs:
         self.login = True
-    print "THIS IS INIT"
-    print self.start_urls
-    print self.login
-
-  # For JS customization
-  # def process_value(value):
-  #     return
 
   def parse_start_url(self, response):
-      print "I WAS HERE"
       if self.login:
-          print "Login"
+          print "Logging in"
           this_is_my_form = None
           for f in response.xpath("//form"):
               if re.search("login", f.extract(), re.IGNORECASE):
@@ -62,14 +54,6 @@ class RegularSpider(CrawlSpider):
               this_is_my_form_url = urlparse.urljoin(response.url, this_is_my_form_url[0])
           else:
               this_is_my_form_url = self.start_urls[0]
-          print this_is_my_form_url
-          print "=============================================="
-          print "****"
-          print "=============================================="
-          print this_is_my_form.extract()
-          print "=============================================="
-          print "****"
-          print "=============================================="
 
           # ASSUMPTION: most login forms put username above password
           #             therefore, for our login form, we will use
@@ -85,8 +69,7 @@ class RegularSpider(CrawlSpider):
               if len(other_fields) > 0:
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:
-                          submit_data[str(of.xpath("@name").extract()[0])] = str(of.xpath("@value").extract()[0])
-              print submit_data
+                          submit_data[str(of.xpath("@name").extract()[0]).encode('utf-8')] = str(of.xpath("@value").extract()[0].encode('utf-8'))
               try:
                   return [scrapy.FormRequest(
                           url=this_is_my_form_url,
@@ -108,45 +91,26 @@ class RegularSpider(CrawlSpider):
           self.parse_item(response)
 
   def parse_javascript(self,response,baseurl):
-      # .open("POST", "main.php", true);
-      # .open("POST", "windows/leakscan.php", true);
-      # .open("POST", "main.php", true);
-      # .open("GET", "windows/function.php?file="+file+"&start="+start+"&end="+end);
-      # .open("GET", "windows/code.php?file="+file+"&lines="+lines);
-      new_forms=[]
       all_opens = re.findall(".open\(.*\);", response)
       for o in all_opens:
-          # print "o = "
-          # print o
           new_form=Form()
           match = re.findall("[\/\w]*\.php\??[^\),]*", o)
           if len(match) != 0:
-              print match
-              print match
-              # print "MATCH = "
-              # print match
-              # print "TYPE = "
               method = re.findall("(POST|GET)", o, re.IGNORECASE)
-              # print method
               if len(method) == 1:
                   new_form['method'] = [str(method[0]).decode('UTF-8')]
-              # print "ACTION = "
               action = re.findall("[\/\w]*\.php", match[0])
-              # print action
               if len(action) == 1:
                   #make full url
                   fullurl=urlparse.urljoin(baseurl,str(action[0]).decode('UTF-8'))
                   new_form['action'] = [fullurl]
-              # print "VAR 1 = "
               params = re.findall("[\?\&]{1}(\w*)=", match[0])
-              # print params
               inputs = []
               for p in params:
                   i = Input()
                   i["inputName"] = [str(p).decode('UTF-8')]
                   inputs.append(i)
               new_form["fields"] = inputs
-          # new_forms.append(new_form)
           if "action" in new_form and "method" in new_form:
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
@@ -155,13 +119,8 @@ class RegularSpider(CrawlSpider):
       return
 
   def request_javascript(self,url,baseurl):
-      print "i am in request"
-      if url in self.visit_js:
-         print "Javascript visited"
-         print url
-      else:
+      if url not in self.visit_js:
          self.visit_js.append(url)
-         print url
          try:
              out = check_output(["curl", "-k", "-sS", url])
              test = self.parse_javascript(out,baseurl)
@@ -173,14 +132,6 @@ class RegularSpider(CrawlSpider):
 
 
   def parse_item(self, response):
-      # if response.status == 500:
-      #     print "spotted meta"
-      #     print response.meta
-      #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
-
-      if self.login:
-          print response.body
-
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -190,18 +141,11 @@ class RegularSpider(CrawlSpider):
           self.traversed_urls.add(response.url)
 
       # This is to capture headers with...
-      print "&&&&&& HEADERS HERE &&&&&&"
-      print response.request.headers
-      print "&&&&&& HEADERS HERE &&&&&&"
       if "Location" in response.request.headers:
            new_forms.append(self.parse_header_type("Location", response.request))
-           # print "Location"
-           # print response.request.headers['Location']
       # Can use same logic as cookie
       # Type is header, injection is location, value is url
       if "Cookie" in response.request.headers:
-           # print "Cookie"
-           # print response.request.url
            cookies=response.request.headers['Cookie']
            #example of cookie PHPSESSID=ks4dsu79gf7ve17uu3rfhmh581; display_all_courses=1;
            new_form = Form()
@@ -219,30 +163,14 @@ class RegularSpider(CrawlSpider):
            input_field["inputName"] = [cstring]
            new_form["fields"] = [input_field]
            new_forms.append(new_form)
-                    #Type is header, Injection is COOKIE, and the param is in param[0]
-                    #URL is response.request.url
-                    #ADD THIS INTO OUTPUT
-                    #ADD THIS INTO OUTPUT
-                    #ADD THIS INTO OUTPUT
-                    #ADD THIS INTO OUTPUT
+           #Type is header, Injection is COOKIE, and the param is in param[0]
+           #URL is response.request.url
       if "Referer" in response.request.headers:
            new_forms.append(self.parse_header_type("Referer", response.request))
-           # print "Referer"
-           # print response.request.headers['Referer']
-                 #Just add it as injnection point type header, param is Language
       if "Language" in response.request.headers:
            new_forms.append(self.parse_header_type("Language", response.request))
-           # print "Language"
-           # print response.request.headers['Language']
-                 #Just add it as injnection point type header, param is Language
       if "X-Requested-By" in response.request.headers:
            new_forms.append(self.parse_header_type("X-Requested-By", response.request))
-           # print "X-Requested-By"
-           # print response.request.headers['X-Requested-By']
-                    #Add type is header param is X-Requested-By to output
-                    #Add type is header param is X-Requested-By to output
-                    #Add type is header param is X-Requested-By to output
-      print "HEADERS END"
 
       # This is to check a hrefs
       a_links = {}
@@ -252,11 +180,12 @@ class RegularSpider(CrawlSpider):
               new_form["method"] = a_link.xpath("@method").extract()
           else:
               new_form["method"] = ["GET".decode("utf-8")]
-          url = a_link.xpath("@href").extract()[0]
-          netloc = urlparse.urlparse(url).netloc
-          if netloc == '' or netloc in self.allowed_domains:
-              url = urlparse.urljoin(self.start_urls[0], url)
-              new_forms = self.generic_extraction_of_forms_and_input(url, new_forms)
+          if len(a_link.xpath("@href").extract())>0:
+              url = a_link.xpath("@href").extract()[0]
+              netloc = urlparse.urlparse(url).netloc
+              if netloc == '' or netloc in self.allowed_domains:
+                  url = urlparse.urljoin(self.start_urls[0], url)
+                  new_forms = self.generic_extraction_of_forms_and_input(url, new_forms)
 
       # This is to check javascript
       print "Checking Javascript"
@@ -265,15 +194,12 @@ class RegularSpider(CrawlSpider):
          url = urlparse.urljoin(response.url,javascript_link.extract())
          self.request_javascript(url,response.url)
          # Extract Path in Javascript SRC
-         # Does not fulfil requirements of keeping one GET param.
          new_forms = self.generic_extraction_of_forms_and_input(url, new_forms, True)
          #End Extract Path in Javascript SRC
 
-      print "LONELY INPUTS HERE"
       lonely_inputs = {}
       for ip in sel.xpath("//input"):
         lonely_inputs[ip.extract()] = ip
-        print ip.extract()
 
       #Extract both GET and POST from form
       for formItem in form:
@@ -300,13 +226,9 @@ class RegularSpider(CrawlSpider):
           inputs = []
           # Need to expand this to include multiple input where input is not a direct form_items but still nested in form tag
           for each_input in form_items:
-              print "XXXXXXXXXXXXXXXXXXXXX"
-              print each_input
-              print "XXXXXXXXXXXXXXXXXXXXX"
               new_input = Input()
               new_input["inputName"] = each_input.xpath("@name").extract()
               new_input["inputType"] = each_input.xpath("@type").extract()
-              # new_form.add_form_input(new_input)
               inputs.append(new_input)
               lonely_inputs.pop(each_input.extract(), None)
 
@@ -315,7 +237,6 @@ class RegularSpider(CrawlSpider):
               new_input["inputName"] = each_input.xpath("@name").extract()
               new_input["inputType"] = "textarea"
               inputs.append(new_input)
-              # new_form.add_form_input(new_input)
 
           # For each leftover input field, tag it to every form.
           # Assumption: On submit, servers will only use the form variable
@@ -330,9 +251,6 @@ class RegularSpider(CrawlSpider):
                   inputs.append(new_input)
           new_form["fields"] = inputs
           new_forms.append(new_form)
-      print "======================================"
-      print new_forms
-      print "======================================"
       return new_forms
 
   def generic_extraction_of_forms_and_input(self, url, new_forms, call_process_item=False):
@@ -366,7 +284,6 @@ class RegularSpider(CrawlSpider):
               new_forms.append(new_form)
 
           if call_process_item and "action" in new_form and "method" in new_form:
-              print "I am in calling"
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
 

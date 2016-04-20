@@ -34,17 +34,10 @@ call([callcmd], shell=True)
 #loop through outputfolder in a3_crawling
 dirPath='output'
 if not os.path.exists(dirPath):
-    print dirPath
-    print "output does not exist"
+    print "Output does not exist"
 else:
-    print "Path exist"
-    print "Path exist"
-    print "Path exist"
-    print "Path exist"
-    print "Path exist"
     for filename in os.listdir(dirPath):
         if len(filename)>0:
-          #print filename
           callexploit='python ../a3_exploit/run.py '+str("output/"+filename)+" "+payloadFilename
           print "==============calling exploit========="
           print callexploit
