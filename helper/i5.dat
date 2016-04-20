@@ -1,0 +1,74 @@
+[
+  {
+    "https://app5.com/www/index.php?course=&lessons_ID=1": {
+      "type": "get", 
+      "param": [
+        "ctg"
+      ]
+    }, 
+    "login_required": {
+      "path": "https://app5.com/www/index.php", 
+      "param": {
+        "username_value": "student", 
+        "password_element_name": "password", 
+        "username_element_name": "login", 
+        "password_value": "student"
+      }
+    }, 
+    "https://app5.com/www/index.php?course=&ctg=lesson_info": {
+      "type": "get", 
+      "param": [
+        "lessons_ID"
+      ]
+    }, 
+    "https://app5.com/www/js/scripts.php": {
+      "type": "get", 
+      "param": [
+        "load", 
+        "build"
+      ]
+    }, 
+    "https://app5.com/www/index.php?lessons_ID=1": {
+      "type": "get", 
+      "param": [
+        "ctg"
+      ]
+    }, 
+    "https://app5.com/www/index.php?courses_ID=1": {
+      "type": "get", 
+      "param": [
+        "ctg"
+      ]
+    }, 
+    "https://app5.com/www/index.php?ctg=reset_pwd": {
+      "type": "post", 
+      "param": [
+        "_qf__reset_password_form", 
+        "login_or_pwd", 
+        "submit_reset_password"
+      ]
+    }, 
+    "https://app5.com/www/index.php?ctg=contact": {
+      "type": "post", 
+      "param": [
+        "submit_contact", 
+        "_qf__contact_form", 
+        "email", 
+        "message_subject"
+      ]
+    }, 
+    "https://app5.com/www/index.php?ctg=lesson_info&lessons_ID=1": {
+      "type": "get", 
+      "param": [
+        "course"
+      ]
+    }, 
+    "https://app5.com/www/index.php?ctg=lesson_info": {
+      "type": "get", 
+      "param": [
+        "lessons_ID", 
+        "courses_ID"
+      ]
+    }
+  }
+]
