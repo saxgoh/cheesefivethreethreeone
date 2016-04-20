@@ -108,7 +108,6 @@ class RegularSpider(CrawlSpider):
           self.parse_item(response)
 
   def parse_javascript(self,response,baseurl):
-
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
       # .open("POST", "main.php", true);
@@ -237,6 +236,51 @@ class RegularSpider(CrawlSpider):
            print response.headers
       print "HEADERS END"
 
+      # This is to check a hrefs
+      a_links = {}
+      for a_link in sel.xpath("//a[not(@href='')]"):
+          new_form = Form()
+          if len(a_link.xpath("@method")) > 0:
+              new_form["method"] = a_link.xpath("@method").extract()
+          else:
+              new_form["method"] = ["GET".decode("utf-8")]
+          url = a_link.xpath("@href").extract()[0]
+          print url
+          split_url = url.split("?")
+          if len(split_url) > 1:
+             # for each param, generate a new form
+             for p in re.split("&","".join(split_url[1:])):
+                 new_form = Form()
+                 new_form["method"] = ["GET".decode("utf-8")]
+                 action = split_url[0].decode("utf-8")
+
+                 ins = []
+                 split_param = p.split("=")
+                 # for n params, each form should stil contain n-1 params in the action
+                 if len(split_param) > 1:
+                     action += "?"
+                     for p2 in re.split("&","".join(split_url[1:])):
+                         if p == p2:
+                             i = Input()
+                             i["inputName"] = [split_param[0]]
+                             ins.append(i)
+                         else:
+                             action += p2 + "&"
+                     action = action[:-1]
+                 else:
+                     i = Input()
+                     i["inputName"] = [split_param[0]]
+                     ins.append(i)
+
+                 new_form["action"] = [action]
+                 new_form["fields"] = ins
+                 print "THIS IS AN A LINK"
+                 # print new_form
+                 new_forms.append(new_form)
+
+
+          # print a_link
+
       # This is to check javascript
       print "Checking Javascript"
       javascript_links = {}
@@ -245,7 +289,7 @@ class RegularSpider(CrawlSpider):
          self.request_javascript(url,response.url)
 
          # #Extract Path in Javascript SRC
-         # # Does not fulfil requirements of keeping one GET param. 
+         # # Does not fulfil requirements of keeping one GET param.
          # split_urls = url.split("?")
          # if len(split_urls)==2:
          #    new_inputs=[]
@@ -293,7 +337,7 @@ class RegularSpider(CrawlSpider):
               print "I am in calling"
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
-  
+
       #End Extract Path in Javascript SRC
 
       print "LONELY INPUTS HERE"
