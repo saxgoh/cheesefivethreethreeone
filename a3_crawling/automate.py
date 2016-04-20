@@ -32,7 +32,7 @@ call([callcmd], shell=True)
 
 #Run A3_exploit
 #loop through outputfolder
-dirPath='./a3_exploit/output'
+dirPath='../a3_exploit/output'
 if not os.path.exists(dirPath):
     print dirPath
     print "output does not exist"
