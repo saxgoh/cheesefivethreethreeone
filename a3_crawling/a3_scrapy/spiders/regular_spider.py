@@ -34,7 +34,7 @@ class RegularSpider(CrawlSpider):
     # self.allowed_domains = kwargs["allowed_domains"]
     self.allowed_domains = [kwargs["allowed_domains"]]
     # if 'depth' in kwargs:
-    settings.overrides['DEPTH_LIMIT'] = int(kwargs["depth"])
+    settings.overrides['DEPTH_LIMIT'] = 20# int(kwargs["depth"])
     if 'username' in kwargs:
         self.username = kwargs['username']
     if 'password' in kwargs:
@@ -178,8 +178,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      # if self.login:
-      #     print response.body
+      if self.login:
+          print response.body
 
       new_forms = []
       sel = Selector(response)
@@ -195,13 +195,13 @@ class RegularSpider(CrawlSpider):
       print "&&&&&& HEADERS HERE &&&&&&"
       if "Location" in response.request.headers:
            new_forms.append(self.parse_header_type("Location", response.request))
-           print "Location"
-           print response.request.headers['Location']
+           # print "Location"
+           # print response.request.headers['Location']
       # Can use same logic as cookie
       # Type is header, injection is location, value is url
       if "Cookie" in response.request.headers:
-           print "Cookie"
-           print response.request.url
+           # print "Cookie"
+           # print response.request.url
            cookies=response.request.headers['Cookie']
            #example of cookie PHPSESSID=ks4dsu79gf7ve17uu3rfhmh581; display_all_courses=1;
            new_form = Form()
@@ -227,18 +227,18 @@ class RegularSpider(CrawlSpider):
                     #ADD THIS INTO OUTPUT
       if "Referer" in response.request.headers:
            new_forms.append(self.parse_header_type("Referer", response.request))
-           print "Referer"
-           print response.request.headers['Referer']
+           # print "Referer"
+           # print response.request.headers['Referer']
                  #Just add it as injnection point type header, param is Language
       if "Language" in response.request.headers:
            new_forms.append(self.parse_header_type("Language", response.request))
-           print "Language"
-           print response.request.headers['Language']
+           # print "Language"
+           # print response.request.headers['Language']
                  #Just add it as injnection point type header, param is Language
       if "X-Requested-By" in response.request.headers:
            new_forms.append(self.parse_header_type("X-Requested-By", response.request))
-           print "X-Requested-By"
-           print response.request.headers['X-Requested-By']
+           # print "X-Requested-By"
+           # print response.request.headers['X-Requested-By']
                     #Add type is header param is X-Requested-By to output
                     #Add type is header param is X-Requested-By to output
                     #Add type is header param is X-Requested-By to output
@@ -253,7 +253,6 @@ class RegularSpider(CrawlSpider):
           else:
               new_form["method"] = ["GET".decode("utf-8")]
           url = a_link.xpath("@href").extract()[0]
-          print url
           netloc = urlparse.urlparse(url).netloc
           if netloc == '' or netloc in self.allowed_domains:
               url = urlparse.urljoin(self.start_urls[0], url)

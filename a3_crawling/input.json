@@ -1,23 +1,18 @@
 {
-  "https://app5.com/": {
+  "https://app1.com/": {
         "allowed_domains": [
-          "app5.com"
+          "app1.com"
         ],
         "loginParam": [
             {
-                "path":"www/index.php",
+                "path":"admin/index.php?page=login",
                 "username": "admin",
                 "password": "admin"
             },
             {
-                "path":"www/index.php",
-                "username": "professor",
-                "password": "professor"
-            },
-            {
-                "path":"www/index.php",
-                "username": "student",
-                "password": "student"
+                "path":"users/login.php",
+                "username": "scanner1",
+                "password": "scanner1"
             }
         ]
     }
