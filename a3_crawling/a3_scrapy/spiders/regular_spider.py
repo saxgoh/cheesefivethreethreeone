@@ -198,10 +198,11 @@ class RegularSpider(CrawlSpider):
       print response.request.headers
       print "&&&&&& HEADERS HERE &&&&&&"
       if "Location" in response.request.headers:
+           new_forms.append(self.parse_header_type("Location", response.request))
            print "Location"
            print response.request.headers['Location']
-                 #Can use same logic as cookie
-                 #type is header, injection is location, value is url
+      # Can use same logic as cookie
+      # Type is header, injection is location, value is url
       if "Cookie" in response.request.headers:
            print "Cookie"
            print response.request.url
@@ -228,16 +229,18 @@ class RegularSpider(CrawlSpider):
                     #ADD THIS INTO OUTPUT
                     #ADD THIS INTO OUTPUT
                     #ADD THIS INTO OUTPUT
-           
       if "Referer" in response.request.headers:
+           new_forms.append(self.parse_header_type("Referer", response.request))
            print "Referer"
            print response.request.headers['Referer']
                  #Just add it as injnection point type header, param is Language
       if "Language" in response.request.headers:
+           new_forms.append(self.parse_header_type("Language", response.request))
            print "Language"
            print response.request.headers['Language']
                  #Just add it as injnection point type header, param is Language
       if "X-Requested-By" in response.request.headers:
+           new_forms.append(self.parse_header_type("X-Requested-By", response.request))
            print "X-Requested-By"
            print response.request.headers['X-Requested-By']
                     #Add type is header param is X-Requested-By to output
@@ -373,3 +376,21 @@ class RegularSpider(CrawlSpider):
               itemproc.process_item(new_form,self)
 
       return new_forms
+
+  def parse_header_type(self, header_type, req):
+      headers = req.headers[header_type]
+      #example of cookie PHPSESSID=ks4dsu79gf7ve17uu3rfhmh581; display_all_courses=1;
+      new_form = Form()
+      new_form["method"] = ["Header"]
+      new_form["action"] = [req.url]
+      input_field = Input()
+      param_field = None
+      for paramvalue in re.split("; ",headers):
+          param=re.split("=",paramvalue)
+          if len((param))>0:
+              if len(param[0])>0:
+                  param_field = header_type
+      if param_field != None:
+          input_field["inputName"] = [param_field]
+          new_form["fields"] = [input_field]
+      return new_form
