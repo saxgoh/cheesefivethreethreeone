@@ -28,7 +28,7 @@ with open(inputFilename, 'r') as f:
 #Run A3_Crawling
 print "Running a3_crawling"
 callcmd='python run.py ' +inputFilename
-#call([callcmd], shell=True)
+call([callcmd], shell=True)
 
 #Run A3_exploit
 #loop through outputfolder in a3_crawling
