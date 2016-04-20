@@ -13,3 +13,7 @@ a3_exploit/output_json_for_vuln_*.json
 a3_crawling/input.json
 a3_exploit/input.json
 a3_exploit/results/
+a3_crawling/input.json~
+a3_crawling/input_all.json
+a3_crawling/output/
+

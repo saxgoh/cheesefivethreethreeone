@@ -170,6 +170,12 @@ class RegularSpider(CrawlSpider):
 
       # if self.login:
       #     print response.body
+
+      if "=appearance" in response.body:
+        print "++++++++++++++++++++"
+        print response.body
+        print "++++++++++++++++++++"
+
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -226,19 +232,51 @@ class RegularSpider(CrawlSpider):
       for javascript_link in sel.xpath("//script/@src"):
          url = urlparse.urljoin(response.url,javascript_link.extract())
          self.request_javascript(url,response.url)
-         #Extract Path in Javascript SRC
-         split_urls = url.split("?")
-         if len(split_urls)==2:
-            new_inputs=[]
-            for param in split_urls[1].split("&"):
-               new_input = Input()
-               parameter=param.split("=")
-               new_input["inputName"] = [parameter[0]]
-               new_inputs.append(new_input)
-            new_form = Form()
-            new_form['action']=[split_urls[0]]
-            new_form['method']=["get".encode('utf-8')]
-            new_form['fields']=new_inputs
+
+         # #Extract Path in Javascript SRC
+         # # Does not fulfil requirements of keeping one GET param. 
+         # split_urls = url.split("?")
+         # if len(split_urls)==2:
+         #    new_inputs=[]
+         #    for param in split_urls[1].split("&"):
+         #       new_input = Input()
+         #       parameter=param.split("=")
+         #       new_input["inputName"] = [parameter[0]]
+         #       new_inputs.append(new_input)
+         #    new_form = Form()
+         #    new_form['action']=[split_urls[0]]
+         #    new_form['method']=["get".encode('utf-8')]
+         #    new_form['fields']=new_inputs
+
+         split_url = url.split("?")
+         if len(split_url) > 1:
+            # for each param, generate a new form
+            for p in re.split("&","".join(split_url[1:])):
+                new_form = Form()
+                new_form["method"] = ["GET".decode("utf-8")]
+                action = split_url[0].decode("utf-8")
+
+                ins = []
+                split_param = p.split("=")
+                # for n params, each form should stil contain n-1 params in the action
+                if len(split_param) > 1:
+                    action += "?"
+                    for p2 in re.split("&","".join(split_url[1:])):
+                        if p == p2:
+                            i = Input()
+                            i["inputName"] = [split_param[0]]
+                            ins.append(i)
+                        else:
+                            action += p2 + "&"
+                    action = action[:-1]
+                else:
+                    i = Input()
+                    i["inputName"] = [split_param[0]]
+                    ins.append(i)
+
+                new_form["action"] = [action]
+                new_form["fields"] = ins
+                new_forms.append(new_form)
 
             if "action" in new_form and "method" in new_form:
               print "I am in calling"
