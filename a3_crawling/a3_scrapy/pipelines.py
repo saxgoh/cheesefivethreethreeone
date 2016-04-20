@@ -2,6 +2,7 @@ import json
 from scrapy import signals
 #from datetime import datetime
 import time
+from urlparse import urlparse
 from a3_scrapy.output_struct import OutputStruct, Item
 # -*- coding: utf-8 -*-
 
@@ -127,9 +128,14 @@ class A3ScrapyPipeline(object):
         # print k + " --> "
         # print v
 
+      append_username=''
       if spider.login:
         final_op["login_required"] = {'path': spider.start_urls[0], 'param': {'username_element_name': spider.username_identifier, 'username_value': spider.username, 'password_element_name': spider.password_identifier, 'password_value': spider.password}}
-      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
+        append_username="_"+str(spider.username).replace("@","").replace(".","")
+
+      filename = urlparse(spider.start_urls[0]).netloc+append_username+"_"+str(int(time.strftime("%H%M%S")))
+      filename = filename.replace(":","").replace("/","")
+#      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
       op_file = open(filename + ".json", "ab")
       op_file.write(json.dumps([final_op], indent=2))
       # print "------------------------------------------"
