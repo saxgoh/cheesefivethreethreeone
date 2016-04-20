@@ -45,7 +45,7 @@ else:
     for filename in os.listdir(dirPath):
         if len(filename)>0:
           #print filename
-          callexploit='python ../a3_exploit/run.py '+str("../a3_crawling/output/"+filename)+" "+payloadFilename
+          callexploit='python ../a3_exploit/run.py '+str("output/"+filename)+" "+payloadFilename
           print "==============calling exploit========="
           print callexploit
           print "==============calling exploit========="
