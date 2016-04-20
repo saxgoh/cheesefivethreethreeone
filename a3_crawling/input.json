@@ -1,14 +1,14 @@
 {
-  "https://bm1.com/": {
-    "allowed_domains": [
-      "bm1.com"
-    ],
-    "loginParam": [
-      {
-        "path":"login.php",
-        "username": "admin",
-        "password": "password"
-      }
-    ]
-  }
+  "https://app6.com/": {
+        "allowed_domains": [
+          "app6.com"
+        ],
+        "loginParam": [
+            {
+                "path":"zimplit.php",
+                "username": "admin",
+                "password": "admin"
+            }
+        ]
+    }
 }
