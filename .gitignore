@@ -16,4 +16,5 @@ a3_exploit/results/
 a3_crawling/input.json~
 a3_crawling/input_all.json
 a3_crawling/output/
+a3_exploit/ghostdriver.log
 

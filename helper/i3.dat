@@ -1,0 +1,27 @@
+[
+  {
+    "https://app3.com/windows/leakscan.php": {
+      "type": "post", 
+      "param": []
+    }, 
+    "https://app3.com/windows/function.php": {
+      "type": "get", 
+      "param": [
+        "start", 
+        "end", 
+        "file"
+      ]
+    }, 
+    "https://app3.com/windows/code.php": {
+      "type": "get", 
+      "param": [
+        "lines", 
+        "file"
+      ]
+    }, 
+    "https://app3.com/main.php": {
+      "type": "post", 
+      "param": []
+    }
+  }
+]
