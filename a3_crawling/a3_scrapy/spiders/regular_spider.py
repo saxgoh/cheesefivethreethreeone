@@ -191,34 +191,7 @@ class RegularSpider(CrawlSpider):
       form = sel.xpath('//form[@action and @method]')
 
       if response.url not in self.traversed_urls:
-          split_url = response.url.split("?")
-          if len(split_url) > 1:
-              # for each param, generate a new form
-              for p in re.split("&","".join(split_url[1:])):
-                  new_form = Form()
-                  new_form["method"] = ["GET".decode("utf-8")]
-                  action = split_url[0].decode("utf-8")
-                  ins = []
-                  split_param = p.split("=")
-                  # for n params, each form should stil contain n-1 params in the action
-                  if len(split_param) > 1:
-                      action += "?"
-                      for p2 in re.split("&","".join(split_url[1:])):
-                          if p == p2:
-                              i = Input()
-                              i["inputName"] = [split_param[0]]
-                              ins.append(i)
-                          else:
-                              action += p2 + "&"
-                      action = action[:-1]
-                  else:
-                      i = Input()
-                      i["inputName"] = [split_param[0]]
-                      ins.append(i)
-
-                  new_form["action"] = [action]
-                  new_form["fields"] = ins
-                  new_forms.append(new_form)
+          new_forms = self.generic_extraction_of_forms_and_input(response.url, new_forms)
           self.traversed_urls.add(response.url)
 
       # This is to capture headers with...
@@ -246,37 +219,43 @@ class RegularSpider(CrawlSpider):
               new_form["method"] = ["GET".decode("utf-8")]
           url = a_link.xpath("@href").extract()[0]
           print url
-          split_url = url.split("?")
-          if len(split_url) > 1:
-             # for each param, generate a new form
-             for p in re.split("&","".join(split_url[1:])):
-                 new_form = Form()
-                 new_form["method"] = ["GET".decode("utf-8")]
-                 action = split_url[0].decode("utf-8")
+          netloc = urlparse.urlparse(url).netloc
+          if netloc == '' or netloc in self.allowed_domains:
+              split_url = url.split("?")
+              if len(split_url) > 1:
+                 # for each param, generate a new form
+                 for p in re.split("&","".join(split_url[1:])):
+                     new_form = Form()
+                     new_form["method"] = ["GET".decode("utf-8")]
+                     action = split_url[0].decode("utf-8")
 
-                 ins = []
-                 split_param = p.split("=")
-                 # for n params, each form should stil contain n-1 params in the action
-                 if len(split_param) > 1:
-                     action += "?"
-                     for p2 in re.split("&","".join(split_url[1:])):
-                         if p == p2:
-                             i = Input()
-                             i["inputName"] = [split_param[0]]
-                             ins.append(i)
-                         else:
-                             action += p2 + "&"
-                     action = action[:-1]
-                 else:
-                     i = Input()
-                     i["inputName"] = [split_param[0]]
-                     ins.append(i)
+                     ins = []
+                     split_param = p.split("=")
+                     # for n params, each form should stil contain n-1 params in the action
+                     if len(split_param) > 1:
+                         action += "?"
+                         for p2 in re.split("&","".join(split_url[1:])):
+                             if p == p2:
+                                 i = Input()
+                                 i["inputName"] = [split_param[0]]
+                                 ins.append(i)
+                             else:
+                                 action += p2 + "&"
+                         action = action[:-1]
+                     else:
+                         i = Input()
+                         i["inputName"] = [split_param[0]]
+                         ins.append(i)
 
-                 new_form["action"] = [action]
-                 new_form["fields"] = ins
-                 print "THIS IS AN A LINK"
-                 # print new_form
-                 new_forms.append(new_form)
+                     if netloc == '':
+                         action = self.start_urls[0] + action
+                     else:
+                         print action
+                     new_form["action"] = [action]
+                     new_form["fields"] = ins
+                     print "THIS IS AN A LINK"
+                     # print new_form
+                     new_forms.append(new_form)
 
 
           # print a_link
@@ -404,4 +383,35 @@ class RegularSpider(CrawlSpider):
       print "======================================"
       print new_forms
       print "======================================"
+      return new_forms
+
+  def generic_extraction_of_forms_and_input(self, url, new_forms):
+      split_url = url.split("?")
+      if len(split_url) > 1:
+          # for each param, generate a new form
+          for p in re.split("&","".join(split_url[1:])):
+              new_form = Form()
+              new_form["method"] = ["GET".decode("utf-8")]
+              action = split_url[0].decode("utf-8")
+              ins = []
+              split_param = p.split("=")
+              # for n params, each form should stil contain n-1 params in the action
+              if len(split_param) > 1:
+                  action += "?"
+                  for p2 in re.split("&","".join(split_url[1:])):
+                      if p == p2:
+                          i = Input()
+                          i["inputName"] = [split_param[0]]
+                          ins.append(i)
+                      else:
+                          action += p2 + "&"
+                  action = action[:-1]
+              else:
+                  i = Input()
+                  i["inputName"] = [split_param[0]]
+                  ins.append(i)
+
+              new_form["action"] = [action]
+              new_form["fields"] = ins
+              new_forms.append(new_form)
       return new_forms
