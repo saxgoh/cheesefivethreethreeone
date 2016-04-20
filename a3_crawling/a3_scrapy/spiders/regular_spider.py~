@@ -17,9 +17,11 @@ class RegularSpider(CrawlSpider):
   start_urls = []
   username = ""
   password = ""
+  username_identifier = ""
+  password_identifier = ""
   login = False
   ops = None
-  collated_urls = set()
+  collated_urls = {}
   visit_js = []
   traversed_urls = set()
 
@@ -65,27 +67,36 @@ class RegularSpider(CrawlSpider):
           password_field = this_is_my_form.xpath(".//input[@type='password']/@name").extract()
           other_fields = this_is_my_form.xpath(".//input[@value!='']")
           if len(username_field) > 0 and len(password_field) > 0:
+              self.username_identifier = str(username_field[0])
+              self.password_identifier = str(password_field[0])
               submit_data = {str(username_field[0]): self.username, str(password_field[0]): self.password}
+              
               if len(other_fields) > 0:
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:
                           submit_data[str(of.xpath("@name").extract()[0])] = str(of.xpath("@value").extract()[0])
               print submit_data
-              return [scrapy.FormRequest(
-                      url=this_is_my_form_url,
-                      formdata=submit_data,
-                      callback=self.parse_item
-              )]
+              try:
+                  return [scrapy.FormRequest(
+                          url=this_is_my_form_url,
+                          formdata=submit_data,
+                          callback=self.parse_item
+                  )]
+              except:
+                  return None
           else:
-              return [scrapy.FormRequest(
-                      url=this_is_my_form_url,
-                      formdata={'username': self.username, 'password': self.password},
-                      callback=self.parse_item
-              )]
+              try:
+                  return [scrapy.FormRequest(
+                          url=this_is_my_form_url,
+                          formdata={'username': self.username, 'password': self.password},
+                          callback=self.parse_item
+                  )]
+              except:
+                  return None
       else:
           self.parse_item(response)
 
-  def parse_javascript(self,response):
+  def parse_javascript(self,response,baseurl):
 
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
@@ -102,9 +113,6 @@ class RegularSpider(CrawlSpider):
           if len(match) != 0:
               print match
               print match
-              print match
-              print match
-              print match
               # print "MATCH = "
               # print match
               # print "TYPE = "
@@ -117,7 +125,7 @@ class RegularSpider(CrawlSpider):
               # print action
               if len(action) == 1:
                   #make full url
-                  fullurl=urlparse.urljoin("XXXXX",str(action[0]).decode('UTF-8'))
+                  fullurl=urlparse.urljoin(baseurl,str(action[0]).decode('UTF-8'))
                   new_form['action'] = [fullurl]
               # print "VAR 1 = "
               params = re.findall("[\?\&]{1}(\w*)=", match[0])
@@ -136,7 +144,7 @@ class RegularSpider(CrawlSpider):
               print "NO ACTION / NO METHOD in JS form"
       return
 
-  def request_javascript(self,url):
+  def request_javascript(self,url,baseurl):
       print "i am in request"
       if url in self.visit_js:
          print "Javascript visited"
@@ -144,8 +152,13 @@ class RegularSpider(CrawlSpider):
       else:
          self.visit_js.append(url)
          print url
-         out = check_output(["curl", "-k", "-sS", url])
-         test = self.parse_javascript(out)
+         try:
+             out = check_output(["curl", "-k", "-sS", url])
+             test = self.parse_javascript(out,baseurl)
+         except:
+             print "***** check_output failed in request_javascript in pipeline!!! *****"
+             print "***** For URL:" + url + "*****"
+
          return
 
 
@@ -155,8 +168,8 @@ class RegularSpider(CrawlSpider):
       #     print response.meta
       #     LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out"))
 
-      if self.login:
-          print response.body
+      # if self.login:
+      #     print response.body
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -193,12 +206,8 @@ class RegularSpider(CrawlSpider):
           self.traversed_urls.add(response.url)
 
       # This is to capture headers with...
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
+      print "&&&&&& HEADERS HERE &&&&&&"
+      print "&&&&&& HEADERS HERE &&&&&&"
       print response.headers
 
       if "Location" in response.headers:
@@ -216,7 +225,7 @@ class RegularSpider(CrawlSpider):
       javascript_links = {}
       for javascript_link in sel.xpath("//script/@src"):
          url = urlparse.urljoin(response.url,javascript_link.extract())
-         self.request_javascript(url)
+         self.request_javascript(url,response.url)
          #Extract Path in Javascript SRC
          split_urls = url.split("?")
          if len(split_urls)==2:
@@ -232,15 +241,17 @@ class RegularSpider(CrawlSpider):
             new_form['fields']=new_inputs
 
             if "action" in new_form and "method" in new_form:
-              print "i am in calling"
+              print "I am in calling"
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
   
       #End Extract Path in Javascript SRC
 
+      print "LONELY INPUTS HERE"
       lonely_inputs = {}
       for ip in sel.xpath("//input"):
         lonely_inputs[ip.extract()] = ip
+        print ip.extract()
 
       #Extract both GET and POST from form
       for formItem in form:
@@ -251,17 +262,16 @@ class RegularSpider(CrawlSpider):
           #concat to form full path
           action_url=urlparse.urljoin(response.url,action_url)
           new_form['action'] = [action_url]
-
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:
-              print "weird form"
+              print "Weird form detected!"
               # This are forms with everything outside
-              form_items = sel.xpath("//*[ancestor::form]/input")
-              form_textareas = sel.xpath("//*[ancestor::form]/textarea")
+              form_items = sel.xpath("//*[ancestor::form]/..//input")
+              form_textareas = sel.xpath("//*[ancestor::form]/..//textarea")
           else:
               # This are the regular forms
-              print "regular form"
+              print "Regular form..."
               form_items = formItem.xpath(".//input")
               form_textareas = formItem.xpath(".//textarea")
 
@@ -286,20 +296,19 @@ class RegularSpider(CrawlSpider):
               # new_form.add_form_input(new_input)
 
           # For each leftover input field, tag it to every form.
-          # Assumption by Elvin: On submit, servers will only use the form variable
-          #                      as required by the user. Therefore, extra inputs
-          #                      will either (1) be ignored by server
-          #                               or (2) crash the server LOL
-          for key, lonely_input in lonely_inputs.iteritems():
-              new_input = Input()
-              new_input["inputName"] = lonely_input.xpath("@name").extract()
-              new_input["inputType"] = lonely_input.xpath("@type").extract()
-              inputs.append(new_input)
+          # Assumption: On submit, servers will only use the form variable
+          #             as required by the user. Therefore, extra inputs
+          #             will either (1) be ignored by server
+          #                      or (2) crash the server LOL
+          if len(formItem.xpath("input")) == 0:
+              for key, lonely_input in lonely_inputs.iteritems():
+                  new_input = Input()
+                  new_input["inputName"] = lonely_input.xpath("@name").extract()
+                  new_input["inputType"] = lonely_input.xpath("@type").extract()
+                  inputs.append(new_input)
           new_form["fields"] = inputs
           new_forms.append(new_form)
       print "======================================"
-      print "======================================"
       print new_forms
-      print "======================================"
       print "======================================"
       return new_forms

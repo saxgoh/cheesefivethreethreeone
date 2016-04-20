@@ -1,7 +1,9 @@
 import json
+import os
 from scrapy import signals
 #from datetime import datetime
 import time
+from urlparse import urlparse
 from a3_scrapy.output_struct import OutputStruct, Item
 # -*- coding: utf-8 -*-
 
@@ -42,18 +44,14 @@ class A3ScrapyPipeline(object):
     #     #spider.log("[MyPipeline] Initializing resources for %s" % spider.name)
 
     def open_spider(self, spider):
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print " OPENED SPIDER "
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print "Started: " + spider.start_urls[0]
       return
 
     def process_item(self, item, spider):
-      print "~~~~~~~~Start of Pipeline~~~~~~~~~~~"
+      print "^^^^^^^^Start of Pipeline^^^^^^^^^^^"
       print item
 
       # where item --> Form object
@@ -97,7 +95,7 @@ class A3ScrapyPipeline(object):
       self.add_to_collated_urls(str(action), {'type': method, 'param': input_set}, spider)
       # self.add_to_collated_urls(res,spider)
 
-      print "~~~~~~~~End of Pipeline~~~~~~~~~~~"
+      print "^^^^^^^^End of Pipeline^^^^^^^^^^^"
       return
 
     def add_to_collated_urls(self, url, type_param_struct, spider):
@@ -127,10 +125,19 @@ class A3ScrapyPipeline(object):
         # print k + " --> "
         # print v
 
+      append_username=''
       if spider.login:
         final_op["login_required"] = {'path': spider.start_urls[0], 'param': {'username_element_name': spider.username_identifier, 'username_value': spider.username, 'password_element_name': spider.password_identifier, 'password_value': spider.password}}
-      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
-      op_file = open(filename + ".json", "ab")
+        append_username="_"+str(spider.username).replace("@","").replace(".","")
+
+      filename = urlparse(spider.start_urls[0]).netloc+append_username+"_"+str(int(time.strftime("%H%M%S")))
+      filename = filename.replace(":","").replace("/","")
+#      filename = spider.start_urls[0].replace(":","").replace("/","") + "_" + str(int(time.time()))
+
+      if not os.path.exists('output'):
+            os.makedirs('output')
+
+      op_file = open("./output/"+filename + ".json", "ab")
       op_file.write(json.dumps([final_op], indent=2))
       # print "------------------------------------------"
       # # for j in spider.collated_urls:
@@ -146,11 +153,7 @@ class A3ScrapyPipeline(object):
       #       s += ","
       #   op_file.write(s)
       # op_file.write("}]")
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       print " CLOSED SPIDER "
-      print "------------------------------------------"
       print "=========================================="
-      print "------------------------------------------"
       return

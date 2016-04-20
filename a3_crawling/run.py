@@ -1,11 +1,20 @@
 import json
 from subprocess import call
-
+import sys
 # Initialization
 depth = 5
 
-with open("input.json","r") as dataFile:
-    data = json.load(dataFile)
+# Initialization
+if len(sys.argv) <> 2:
+    exit("Usage: " + sys.argv[0] + " <input urls>")
+else:
+    inFile = sys.argv[1]
+try:
+    print "Input File is "+inFile
+    with open(inFile,"r") as dataFile:
+        data = json.load(dataFile)
+except:
+        sys.exit('Cannot open input.json, exiting...')
 
 # Method definition
 def exec_scrapy(path, allowed_domains, username=None, password=None):
@@ -13,7 +22,10 @@ def exec_scrapy(path, allowed_domains, username=None, password=None):
     if username and password:
         cmd += " -a username=" + username + " -a password=" + password
         cmd += " -a login=true"
-    call( [cmd] , shell=True )
+    try:
+        call( [cmd] , shell=True )
+    except:
+        sys.exit('Cannot exec Scrapy, exiting...')
 
 # Iteration of input file
 for path, details in data.iteritems():
@@ -26,3 +38,4 @@ for path, details in data.iteritems():
         for param in login_params:
             exec_scrapy(path + param['path'], allowed_domains, param['username'], param['password'])
     exec_scrapy(path, allowed_domains)
+

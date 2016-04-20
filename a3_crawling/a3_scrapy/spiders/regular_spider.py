@@ -86,17 +86,24 @@ class RegularSpider(CrawlSpider):
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:
                           submit_data[str(of.xpath("@name").extract()[0])] = str(of.xpath("@value").extract()[0])
-              return [scrapy.FormRequest(
-                      url=this_is_my_form_url,
-                      formdata=submit_data,
-                      callback=self.parse_item
-              )]
+              print submit_data
+              try:
+                  return [scrapy.FormRequest(
+                          url=this_is_my_form_url,
+                          formdata=submit_data,
+                          callback=self.parse_item
+                  )]
+              except:
+                  return None
           else:
-              return [scrapy.FormRequest(
-                      url=this_is_my_form_url,
-                      formdata={'username': self.username, 'password': self.password},
-                      callback=self.parse_item
-              )]
+              try:
+                  return [scrapy.FormRequest(
+                          url=this_is_my_form_url,
+                          formdata={'username': self.username, 'password': self.password},
+                          callback=self.parse_item
+                  )]
+              except:
+                  return None
       else:
           self.parse_item(response)
 
@@ -115,9 +122,6 @@ class RegularSpider(CrawlSpider):
           new_form=Form()
           match = re.findall("[\/\w]*\.php\??[^\),]*", o)
           if len(match) != 0:
-              print match
-              print match
-              print match
               print match
               print match
               # print "MATCH = "
@@ -159,8 +163,13 @@ class RegularSpider(CrawlSpider):
       else:
          self.visit_js.append(url)
          print url
-         out = check_output(["curl", "-k", "-sS", url])
-         test = self.parse_javascript(out,baseurl)
+         try:
+             out = check_output(["curl", "-k", "-sS", url])
+             test = self.parse_javascript(out,baseurl)
+         except:
+             print "***** check_output failed in request_javascript in pipeline!!! *****"
+             print "***** For URL:" + url + "*****"
+
          return
 
 
@@ -172,6 +181,12 @@ class RegularSpider(CrawlSpider):
 
       # if self.login:
       #     print response.body
+
+      if "=appearance" in response.body:
+        print "++++++++++++++++++++"
+        print response.body
+        print "++++++++++++++++++++"
+
       new_forms = []
       sel = Selector(response)
       form = sel.xpath('//form[@action and @method]')
@@ -208,12 +223,8 @@ class RegularSpider(CrawlSpider):
           self.traversed_urls.add(response.url)
 
       # This is to capture headers with...
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
-      print "HEADERS HERE"
+      print "&&&&&& HEADERS HERE &&&&&&"
+      print "&&&&&& HEADERS HERE &&&&&&"
       print response.headers
 
       if "Location" in response.headers:
@@ -247,7 +258,7 @@ class RegularSpider(CrawlSpider):
             new_form['fields']=new_inputs
 
             if "action" in new_form and "method" in new_form:
-              print "i am in calling"
+              print "I am in calling"
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
   
@@ -271,13 +282,13 @@ class RegularSpider(CrawlSpider):
           new_form['method'] = formItem.xpath('@method').extract()
 
           if len(formItem.xpath("input")) == 0:
-              print "weird form"
+              print "Weird form detected!"
               # This are forms with everything outside
               form_items = sel.xpath("//*[ancestor::form]/..//input")
               form_textareas = sel.xpath("//*[ancestor::form]/..//textarea")
           else:
               # This are the regular forms
-              print "regular form"
+              print "Regular form..."
               form_items = formItem.xpath(".//input")
               form_textareas = formItem.xpath(".//textarea")
 
@@ -315,8 +326,6 @@ class RegularSpider(CrawlSpider):
           new_form["fields"] = inputs
           new_forms.append(new_form)
       print "======================================"
-      print "======================================"
       print new_forms
-      print "======================================"
       print "======================================"
       return new_forms
