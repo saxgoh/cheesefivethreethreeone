@@ -180,11 +180,6 @@ class RegularSpider(CrawlSpider):
 
       # if self.login:
       #     print response.body
-      
-
-
-
-
       if "=appearance" in response.body:
         print "++++++++++++++++++++"
         print response.body
@@ -252,44 +247,8 @@ class RegularSpider(CrawlSpider):
           print url
           netloc = urlparse.urlparse(url).netloc
           if netloc == '' or netloc in self.allowed_domains:
-              split_url = url.split("?")
-              if len(split_url) > 1:
-                 # for each param, generate a new form
-                 for p in re.split("&","".join(split_url[1:])):
-                     new_form = Form()
-                     new_form["method"] = ["GET".decode("utf-8")]
-                     action = split_url[0].decode("utf-8")
-
-                     ins = []
-                     split_param = p.split("=")
-                     # for n params, each form should stil contain n-1 params in the action
-                     if len(split_param) > 1:
-                         action += "?"
-                         for p2 in re.split("&","".join(split_url[1:])):
-                             if p == p2:
-                                 i = Input()
-                                 i["inputName"] = [split_param[0]]
-                                 ins.append(i)
-                             else:
-                                 action += p2 + "&"
-                         action = action[:-1]
-                     else:
-                         i = Input()
-                         i["inputName"] = [split_param[0]]
-                         ins.append(i)
-
-                     if netloc == '':
-                         action = self.start_urls[0] + action
-                     else:
-                         print action
-                     new_form["action"] = [action]
-                     new_form["fields"] = ins
-                     print "THIS IS AN A LINK"
-                     # print new_form
-                     new_forms.append(new_form)
-
-
-          # print a_link
+              url = urlparse.urljoin(self.start_urls[0], url)
+              new_forms = self.generic_extraction_of_forms_and_input(url, new_forms)
 
       # This is to check javascript
       print "Checking Javascript"
@@ -297,58 +256,10 @@ class RegularSpider(CrawlSpider):
       for javascript_link in sel.xpath("//script/@src"):
          url = urlparse.urljoin(response.url,javascript_link.extract())
          self.request_javascript(url,response.url)
-
-         # #Extract Path in Javascript SRC
-         # # Does not fulfil requirements of keeping one GET param.
-         # split_urls = url.split("?")
-         # if len(split_urls)==2:
-         #    new_inputs=[]
-         #    for param in split_urls[1].split("&"):
-         #       new_input = Input()
-         #       parameter=param.split("=")
-         #       new_input["inputName"] = [parameter[0]]
-         #       new_inputs.append(new_input)
-         #    new_form = Form()
-         #    new_form['action']=[split_urls[0]]
-         #    new_form['method']=["get".encode('utf-8')]
-         #    new_form['fields']=new_inputs
-
-         split_url = url.split("?")
-         if len(split_url) > 1:
-            # for each param, generate a new form
-            for p in re.split("&","".join(split_url[1:])):
-                new_form = Form()
-                new_form["method"] = ["GET".decode("utf-8")]
-                action = split_url[0].decode("utf-8")
-
-                ins = []
-                split_param = p.split("=")
-                # for n params, each form should stil contain n-1 params in the action
-                if len(split_param) > 1:
-                    action += "?"
-                    for p2 in re.split("&","".join(split_url[1:])):
-                        if p == p2:
-                            i = Input()
-                            i["inputName"] = [split_param[0]]
-                            ins.append(i)
-                        else:
-                            action += p2 + "&"
-                    action = action[:-1]
-                else:
-                    i = Input()
-                    i["inputName"] = [split_param[0]]
-                    ins.append(i)
-
-                new_form["action"] = [action]
-                new_form["fields"] = ins
-                new_forms.append(new_form)
-
-            if "action" in new_form and "method" in new_form:
-              print "I am in calling"
-              itemproc = self.crawler.engine.scraper.itemproc
-              itemproc.process_item(new_form,self)
-
-      #End Extract Path in Javascript SRC
+         # Extract Path in Javascript SRC
+         # Does not fulfil requirements of keeping one GET param.
+         new_forms = self.generic_extraction_of_forms_and_input(url, new_forms, True)
+         #End Extract Path in Javascript SRC
 
       print "LONELY INPUTS HERE"
       lonely_inputs = {}
@@ -416,7 +327,7 @@ class RegularSpider(CrawlSpider):
       print "======================================"
       return new_forms
 
-  def generic_extraction_of_forms_and_input(self, url, new_forms):
+  def generic_extraction_of_forms_and_input(self, url, new_forms, call_process_item=False):
       split_url = url.split("?")
       if len(split_url) > 1:
           # for each param, generate a new form
@@ -445,4 +356,10 @@ class RegularSpider(CrawlSpider):
               new_form["action"] = [action]
               new_form["fields"] = ins
               new_forms.append(new_form)
+
+          if call_process_item and "action" in new_form and "method" in new_form:
+              print "I am in calling"
+              itemproc = self.crawler.engine.scraper.itemproc
+              itemproc.process_item(new_form,self)
+
       return new_forms

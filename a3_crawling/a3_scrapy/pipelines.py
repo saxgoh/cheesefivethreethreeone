@@ -3,7 +3,7 @@ import os
 from scrapy import signals
 #from datetime import datetime
 import time
-from urlparse import urlparse
+from urlparse import urlparse, urljoin
 from a3_scrapy.output_struct import OutputStruct, Item
 # -*- coding: utf-8 -*-
 
@@ -119,6 +119,7 @@ class A3ScrapyPipeline(object):
       final_op = {}
       for k,v in spider.collated_urls.iteritems():
         actual_key = k.split(" ")[1]
+        actual_key = urljoin(spider.start_urls[0], actual_key)
         actual_value = v
         actual_value["param"] = list(v["param"])
         final_op[actual_key] = actual_value
