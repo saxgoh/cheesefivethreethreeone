@@ -167,5 +167,17 @@
                 "password": "admin"
             }
         ]
-    }
+    },
+  "https://bm1.com/": {
+    "allowed_domains": [
+      "bm1.com"
+    ],
+    "loginParam": [
+      {
+        "path":"login.php",
+        "username": "admin",
+        "password": "password"
+      }
+    ]
+  }
 }

@@ -45,6 +45,10 @@ class RegularSpider(CrawlSpider):
     print self.start_urls
     print self.login
 
+  # For JS customization
+  # def process_value(value):
+  #     return
+
   def parse_start_url(self, response):
       print "I WAS HERE"
       if self.login:
@@ -59,6 +63,13 @@ class RegularSpider(CrawlSpider):
           else:
               this_is_my_form_url = self.start_urls[0]
           print this_is_my_form_url
+          print "=============================================="
+          print "****"
+          print "=============================================="
+          print this_is_my_form.extract()
+          print "=============================================="
+          print "****"
+          print "=============================================="
 
           # ASSUMPTION: most login forms put username above password
           #             therefore, for our login form, we will use
@@ -70,7 +81,7 @@ class RegularSpider(CrawlSpider):
               self.username_identifier = str(username_field[0])
               self.password_identifier = str(password_field[0])
               submit_data = {str(username_field[0]): self.username, str(password_field[0]): self.password}
-              
+
               if len(other_fields) > 0:
                   for of in other_fields:
                       if len(of.xpath("@name")) > 0:
@@ -97,7 +108,6 @@ class RegularSpider(CrawlSpider):
           self.parse_item(response)
 
   def parse_javascript(self,response,baseurl):
-
       # .open("POST", "main.php", true);
       # .open("POST", "windows/leakscan.php", true);
       # .open("POST", "main.php", true);
@@ -257,9 +267,56 @@ class RegularSpider(CrawlSpider):
                     #Add type is header param is X-Requested-By to output
       print "HEADERS END"
 
+<<<<<<< HEAD
 
       print "&&&&&& HEADERS HERE &&&&&&"
       print "&&&&&& HEADERS HERE &&&&&&"
+=======
+      # This is to check a hrefs
+      a_links = {}
+      for a_link in sel.xpath("//a[not(@href='')]"):
+          new_form = Form()
+          if len(a_link.xpath("@method")) > 0:
+              new_form["method"] = a_link.xpath("@method").extract()
+          else:
+              new_form["method"] = ["GET".decode("utf-8")]
+          url = a_link.xpath("@href").extract()[0]
+          print url
+          split_url = url.split("?")
+          if len(split_url) > 1:
+             # for each param, generate a new form
+             for p in re.split("&","".join(split_url[1:])):
+                 new_form = Form()
+                 new_form["method"] = ["GET".decode("utf-8")]
+                 action = split_url[0].decode("utf-8")
+
+                 ins = []
+                 split_param = p.split("=")
+                 # for n params, each form should stil contain n-1 params in the action
+                 if len(split_param) > 1:
+                     action += "?"
+                     for p2 in re.split("&","".join(split_url[1:])):
+                         if p == p2:
+                             i = Input()
+                             i["inputName"] = [split_param[0]]
+                             ins.append(i)
+                         else:
+                             action += p2 + "&"
+                     action = action[:-1]
+                 else:
+                     i = Input()
+                     i["inputName"] = [split_param[0]]
+                     ins.append(i)
+
+                 new_form["action"] = [action]
+                 new_form["fields"] = ins
+                 print "THIS IS AN A LINK"
+                 # print new_form
+                 new_forms.append(new_form)
+
+
+          # print a_link
+>>>>>>> 557c7a371b2821e501758ed906f220077a7a47e9
 
       # This is to check javascript
       print "Checking Javascript"
@@ -269,7 +326,7 @@ class RegularSpider(CrawlSpider):
          self.request_javascript(url,response.url)
 
          # #Extract Path in Javascript SRC
-         # # Does not fulfil requirements of keeping one GET param. 
+         # # Does not fulfil requirements of keeping one GET param.
          # split_urls = url.split("?")
          # if len(split_urls)==2:
          #    new_inputs=[]
@@ -317,7 +374,7 @@ class RegularSpider(CrawlSpider):
               print "I am in calling"
               itemproc = self.crawler.engine.scraper.itemproc
               itemproc.process_item(new_form,self)
-  
+
       #End Extract Path in Javascript SRC
 
       print "LONELY INPUTS HERE"
