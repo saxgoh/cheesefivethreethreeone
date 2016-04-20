@@ -180,10 +180,6 @@ class RegularSpider(CrawlSpider):
 
       # if self.login:
       #     print response.body
-      if "=appearance" in response.body:
-        print "++++++++++++++++++++"
-        print response.body
-        print "++++++++++++++++++++"
 
       new_forms = []
       sel = Selector(response)
