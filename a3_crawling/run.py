@@ -1,11 +1,17 @@
 import json
 from subprocess import call
-
+import sys
 # Initialization
 depth = 5
 
+# Initialization
+if len(sys.argv) <> 2:
+    exit("Usage: " + sys.argv[0] + " <input urls>")
+else:
+    inFile = sys.argv[1]
 try:
-    with open("input.json","r") as dataFile:
+    print "Input File is "+inFile
+    with open(inFile,"r") as dataFile:
         data = json.load(dataFile)
 except:
         sys.exit('Cannot open input.json, exiting...')

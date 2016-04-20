@@ -1,0 +1,131 @@
+[
+  {
+    "https://app1.com/calendar.php": {
+      "type": "get", 
+      "param": [
+        "date"
+      ]
+    }, 
+    "https://app1.com/pictures/search.php": {
+      "type": "get", 
+      "param": [
+        "query"
+      ]
+    }, 
+    "login_required": {
+      "path": "https://app1.com/users/login.php", 
+      "param": {
+        "username_value": "scanner1", 
+        "password_element_name": "password", 
+        "username_element_name": "username", 
+        "password_value": "scanner1"
+      }
+    },
+    "https://app1.com/pictures/upload.php": {
+      "type": "post", 
+      "param": [
+        "MAX_FILE_SIZE", 
+        "name", 
+        "title", 
+        "price", 
+        "pic", 
+        "tag"
+      ]
+    },  
+    "https://app1.com/cart/action.php": {
+      "type": "post", 
+      "param": [
+        "action", 
+        "pics[]", 
+        "couponcode"
+      ]
+    }, 
+    "https://app1.com/admin/index.php": {
+      "type": "post", 
+      "param": [
+        "password", 
+        "adminname", 
+        "page"
+      ]
+    }, 
+    "https://app1.com/users/sample.php": {
+      "type": "get", 
+      "param": [
+        "userid"
+      ]
+    }, 
+    "https://app1.com/guestbook.php": {
+      "type": "post", 
+      "param": [
+        "name"
+      ]
+    }, 
+    "https://app1.com/comments/preview_comment.php": {
+      "type": "post", 
+      "param": [
+        "query", 
+        "picid"
+      ]
+    }, 
+    "https://app1.com/users/view.php": {
+      "type": "get", 
+      "param": [
+        "userid"
+      ]
+    }, 
+    "https://app1.com/admin/index.php?page=login": {
+      "type": "post", 
+      "param": [
+        "password", 
+        "adminname"
+      ]
+    }, 
+    "https://app1.com/cart/action.php?action=delete": {
+      "type": "post", 
+      "param": [
+        "pics[]"
+      ]
+    }, 
+    "https://app1.com/pictures/view.php": {
+      "type": "get", 
+      "param": [
+        "picid"
+      ]
+    }, 
+    "https://app1.com/cart/action.php?action=purchase": {
+      "type": "post", 
+      "param": []
+    }, 
+    "https://app1.com/cart/action.php?action=addcoupon": {
+      "type": "post", 
+      "param": [
+        "couponcode"
+      ]
+    }, 
+    "https://app1.com/users/login.php": {
+      "type": "post", 
+      "param": [
+        "username", 
+        "query", 
+        "password"
+      ]
+    }, 
+    "https://app1.com/users/register.php": {
+      "type": "post", 
+      "param": [
+        "username", 
+        "firstname", 
+        "lastname", 
+        "query", 
+        "password", 
+        "againpass"
+      ]
+    }, 
+    "https://app1.com/passcheck.php": {
+      "type": "post", 
+      "param": [
+        "password"
+      ]
+    }
+  }
+]
