@@ -1,18 +1,23 @@
 {
-  "https://app7.com/": {
+  "https://app5.com/": {
         "allowed_domains": [
-          "app7.com"
+          "app5.com"
         ],
         "loginParam": [
             {
-                "path":"index.php?page=login",
-                "username": "test@test.com",
-                "password": "testtest"
-            },
-     	    {
-                "path":"oc-admin/index.php?page=login",
+                "path":"www/index.php",
                 "username": "admin",
                 "password": "admin"
+            },
+            {
+                "path":"www/index.php",
+                "username": "professor",
+                "password": "professor"
+            },
+            {
+                "path":"www/index.php",
+                "username": "student",
+                "password": "student"
             }
         ]
     }
