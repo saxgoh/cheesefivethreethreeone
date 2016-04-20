@@ -6,7 +6,7 @@ depth = 5
 
 # Initialization
 if len(sys.argv) <> 2:
-    exit("Usage: " + sys.argv[0] + " <input urls>")
+    exit("Usage: " + sys.argv[0] + " <input_urls_json_file>")
 else:
     inFile = sys.argv[1]
 try:
