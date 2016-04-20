@@ -1,14 +1,24 @@
 {
-  "https://bm1.com/": {
-    "allowed_domains": [
-      "bm1.com"
-    ],
-    "loginParam": [
-      {
-        "path":"login.php",
-        "username": "admin",
-        "password": "password"
-      }
-    ]
-  }
+  "https://app5.com/": {
+        "allowed_domains": [
+          "app5.com"
+        ],
+        "loginParam": [
+            {
+                "path":"www/index.php",
+                "username": "admin",
+                "password": "admin"
+            },
+            {
+                "path":"www/index.php",
+                "username": "professor",
+                "password": "professor"
+            },
+            {
+                "path":"www/index.php",
+                "username": "student",
+                "password": "student"
+            }
+        ]
+    }
 }

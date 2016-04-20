@@ -26,7 +26,7 @@ class RegularSpider(CrawlSpider):
   traversed_urls = set()
 
   # Rules for CrawlSpider
-  rules = [Rule(LinkExtractor(allow=('Inclusion'),deny=("logout", "Logout", "Log Out", "Log out", "Sign out")), callback="parse_item", follow= True,)]
+  rules = [Rule(LinkExtractor(allow=(),deny=("logout", "Logout", "Log Out", "Log out", "Sign out")), callback="parse_item", follow= True,)]
 
   def __init__(self, *args, **kwargs):
     super(RegularSpider, self).__init__(*args, **kwargs)
